@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibeStream | Creator Streaming Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">V</div>
+        <div>
+          <p class="brand-name">VIBESTREAM</p>
+          <p class="brand-sub">Creative Pulse Network</p>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Primary">
+        <button class="menu-item active" data-section="all">Home</button>
+        <button class="menu-item" data-section="music">Music</button>
+        <button class="menu-item" data-section="videos">Videos</button>
+        <button class="menu-item" data-section="series">Series</button>
+        <button class="menu-item" data-section="graphics">Graphics</button>
+        <button class="menu-item" data-section="marketplace">Marketplace</button>
+        <button class="menu-item" data-section="upload">Upload</button>
+      </nav>
+
+      <div class="playlist-panel">
+        <p class="panel-title">Library</p>
+        <button class="menu-item subtle" data-section="favorites">My Favorites</button>
+        <button class="menu-item subtle" data-section="history">Watch Later</button>
+        <button class="menu-item subtle" data-section="recent">Recently Played</button>
+      </div>
+
+      <div class="community-card">
+        <p>Always Free Platform</p>
+        <span>No subscriptions, no paywalls. Upload and stream freely.</span>
+        <button type="button" id="communityShare">Invite Creator</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuToggle" aria-label="Toggle menu">Menu</button>
+
+        <label class="search-wrap" for="searchInput">
+          <input id="searchInput" type="search" placeholder="Search tracks, videos, creators and graphics..." autocomplete="off" />
+        </label>
+
+        <div class="top-actions">
+          <button class="btn-primary" id="createBtn">+ Create</button>
+          <button class="icon-btn" id="themeCycle" aria-label="Change accent">Accent</button>
+          <button class="avatar-btn" id="profileBtn" aria-label="Open profile">
+            <span>JD</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="hero-grid">
+        <article class="hero-banner reveal">
+          <p class="overline">Welcome to</p>
+          <h1>VibeStream Studio</h1>
+          <p>Stream, release, promote and grow your audience from one dashboard. 100% free access.</p>
+          <div class="hero-cta">
+            <button class="btn-primary" id="playFeatured">Start Streaming</button>
+            <button class="btn-outline" id="uploadOpen">Upload Content</button>
+          </div>
+        </article>
+
+        <article class="hero-ad reveal delay-1">
+          <h2>Community Spotlight</h2>
+          <p>Discover weekly creator highlights and open collaborations.</p>
+          <button class="btn-primary" id="joinSpotlight">Join Spotlight</button>
+        </article>
+      </section>
+
+      <section class="stats reveal delay-1" id="statsStrip"></section>
+
+      <section class="streaming-panel reveal delay-2" id="streamingPanel">
+        <div class="streaming-head">
+          <h2>Streaming Options</h2>
+          <p id="streamStatus">Status: Offline</p>
+        </div>
+        <div class="streaming-grid">
+          <label>
+            Stream Quality
+            <select id="streamQuality">
+              <option value="360p">360p</option>
+              <option value="720p" selected>720p</option>
+              <option value="1080p">1080p</option>
+              <option value="4k">4K</option>
+            </select>
+          </label>
+          <label>
+            Stream Mode
+            <select id="streamMode">
+              <option value="public" selected>Public</option>
+              <option value="unlisted">Unlisted</option>
+              <option value="private">Private</option>
+            </select>
+          </label>
+          <label>
+            Source
+            <select id="streamSource">
+              <option value="camera" selected>Camera</option>
+              <option value="screen">Screen Share</option>
+              <option value="mixed">Camera + Screen</option>
+            </select>
+          </label>
+        </div>
+        <div class="streaming-actions">
+          <button class="btn-primary" id="goLiveBtn">Go Live</button>
+          <button class="btn-outline" id="scheduleBtn">Schedule Stream</button>
+          <button class="btn-outline" id="stopLiveBtn">Stop Stream</button>
+        </div>
+      </section>
+
+      <section class="live-studio reveal delay-2" id="liveStudio">
+        <div class="live-main">
+          <article class="stream-screen" id="streamScreen">
+            <div class="screen-status" id="screenStatusBadge">OFFLINE</div>
+            <h3 id="screenTitle">No stream selected</h3>
+            <p id="screenMeta">Select a stream from the feed.</p>
+          </article>
+
+          <section class="section-head compact">
+            <h2>Stream Filters</h2>
+            <div class="stream-filter-row" id="streamFilterRow"></div>
+          </section>
+
+          <section class="stream-feed" id="streamFeed"></section>
+        </div>
+
+        <aside class="comments-panel">
+          <header class="comments-head">
+            <h3>Live Comments</h3>
+            <p>React with Like, Fire, or Love</p>
+          </header>
+          <div class="comments-list" id="commentsList"></div>
+          <form id="commentForm" class="comment-form">
+            <input id="commentInput" name="comment" maxlength="240" placeholder="Write a comment..." required />
+            <button class="btn-primary" type="submit">Send</button>
+          </form>
+        </aside>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="feed-column">
+          <section class="section-head">
+            <h2>Trending Now</h2>
+            <div class="head-controls">
+              <div id="filterChips" class="chips"></div>
+              <button class="btn-link" id="clearFilters">Clear</button>
+            </div>
+          </section>
+          <section id="trendingGrid" class="card-grid"></section>
+
+          <section class="section-head compact">
+            <h2>Latest Uploads</h2>
+            <button class="btn-link" id="toggleUploads">Show More</button>
+          </section>
+          <section id="latestStrip" class="upload-strip"></section>
+
+          <section class="section-head compact">
+            <h2>Featured Promotions</h2>
+          </section>
+          <section class="promo-grid" id="promoGrid"></section>
+        </section>
+
+        <aside class="side-column">
+          <section class="widget reveal delay-2">
+            <header>
+              <h3>Top Creators</h3>
+            </header>
+            <div id="creatorsList" class="list"></div>
+          </section>
+
+          <section class="widget reveal delay-3">
+            <header>
+              <h3>Top Playlist</h3>
+            </header>
+            <ol id="playlistList" class="rank-list"></ol>
+          </section>
+
+          <section class="widget reveal delay-4">
+            <header>
+              <h3>Watch Queue</h3>
+              <button class="btn-link" id="clearQueue">Clear Queue</button>
+            </header>
+            <ul id="queueList" class="queue"></ul>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <section class="now-playing" id="nowPlayingBar" aria-live="polite">
+    <p id="nowPlayingText">Now playing: Nothing selected yet</p>
+    <div>
+      <button class="btn-outline" id="queueRandom">Queue Random</button>
+    </div>
+  </section>
+
+  <dialog id="uploadDialog">
+    <form id="uploadForm" method="dialog">
+      <header class="upload-header">
+        <h3>Upload New Content</h3>
+        <p>Fill details below, then publish to add content to your dashboard.</p>
+      </header>
+
+      <section class="upload-grid">
+        <div class="upload-section">
+          <h4>Content Details</h4>
+          <label>
+            Title
+            <input name="title" placeholder="Summer Vibe Session" />
+          </label>
+          <label>
+            Category
+            <select name="category" required>
+              <option value="music">Music</option>
+              <option value="music video">Music Video</option>
+              <option value="videos">Video</option>
+              <option value="movie">Movie</option>
+              <option value="mixtape">Mixtape</option>
+              <option value="series">Series</option>
+              <option value="graphics">Graphics</option>
+              <option value="podcast">Podcast</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label>
+            Genre
+            <select name="genre">
+              <option value="afrobeats" selected>Afrobeats</option>
+              <option value="hip hop">Hip Hop</option>
+              <option value="r&b">R&B</option>
+              <option value="amapiano">Amapiano</option>
+              <option value="dancehall">Dancehall</option>
+              <option value="gospel">Gospel</option>
+              <option value="podcast">Podcast Talk</option>
+              <option value="cinematic">Cinematic</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label>
+            Custom Category (optional)
+            <input name="customCategory" maxlength="30" placeholder="e.g. documentary, live set" />
+          </label>
+          <label>
+            Creator Name
+            <input name="creator" required placeholder="Your stage name" />
+          </label>
+        </div>
+
+        <div class="upload-section">
+          <h4>Bulk Upload Tools</h4>
+          <label>
+            Multiple Upload Titles (optional)
+            <textarea name="bulkTitles" rows="5" placeholder="Paste one title per line to upload many items at once"></textarea>
+          </label>
+          <label>
+            Upload Audio/Video Files (optional)
+            <input type="file" name="mediaFiles" id="mediaFiles" accept="audio/*,video/*" multiple />
+          </label>
+          <p class="field-note">Pick files in multiple rounds. New selections are added to the queue.</p>
+        </div>
+      </section>
+
+      <div class="pending-files" id="pendingFilesWrap">
+        <div class="pending-files-head">
+          <span>Selected Files</span>
+          <button type="button" class="btn-link" id="clearPendingFiles">Clear</button>
+        </div>
+        <ul id="pendingFilesList"></ul>
+      </div>
+
+      <menu class="upload-actions">
+        <div class="menu-left">
+          <button class="btn-outline" type="button" id="uploadBack">Back</button>
+        </div>
+        <div class="menu-right">
+          <button value="cancel" class="btn-outline" type="button" id="uploadCancel">Cancel</button>
+          <button class="btn-primary" type="submit">Publish</button>
+        </div>
+      </menu>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
