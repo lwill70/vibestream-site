@@ -1584,6 +1584,30 @@ body {
 .category-card:hover {
   background: linear-gradient(135deg, rgba(31, 113, 255, 0.15) 0%, rgba(0, 210, 255, 0.08) 100%);
 }
+
+/* ADMIN BUTTON */
+.btn-admin {
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(255, 69, 0, 0.1) 100%);
+  border: 1px solid rgba(255, 165, 0, 0.5);
+  color: #ffa500;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-admin:hover {
+  background: linear-gradient(135deg, rgba(255, 165, 0, 0.3) 0%, rgba(255, 69, 0, 0.2) 100%);
+  border-color: #ffa500;
+  color: #ffb347;
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.2);
+}
 }
 
 .contact-btn {

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VibeStream Admin Dashboard</title>
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- ADMIN SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-logo">🎵</div>
+        <h2>VibeStream Admin</h2>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="#dashboard" class="nav-link active" data-section="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="#content" class="nav-link" data-section="content">
+          <span class="nav-icon">📁</span>
+          <span class="nav-text">Content Management</span>
+        </a>
+        <a href="#users" class="nav-link" data-section="users">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">User Management</span>
+        </a>
+        <a href="#analytics" class="nav-link" data-section="analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+        <a href="#ads" class="nav-link" data-section="ads">
+          <span class="nav-icon">📢</span>
+          <span class="nav-text">Advertisements</span>
+        </a>
+        <a href="#settings" class="nav-link" data-section="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="admin-footer">
+        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- ADMIN MAIN CONTENT -->
+    <main class="admin-main">
+      <!-- TOP BAR -->
+      <div class="admin-topbar">
+        <div class="topbar-title">
+          <h1 id="section-title">Dashboard</h1>
+          <p id="section-subtitle">Welcome to VibeStream Admin Panel</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-primary" onclick="backToSite()">👁️ View Site</button>
+          <div class="admin-user">
+            <span id="admin-name">Admin</span>
+            <div class="user-avatar">👤</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard" class="admin-section active">
+        <div class="dashboard-grid">
+          <!-- STATS CARDS -->
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <h3>Total Uploads</h3>
+              <p class="stat-value" id="stat-uploads">0</p>
+              <p class="stat-change">📈 +12% this month</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <h3>Total Users</h3>
+              <p class="stat-value" id="stat-users">0</p>
+              <p class="stat-change">📈 +5 new this week</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-info">
+              <h3>Total Views</h3>
+              <p class="stat-value" id="stat-views">0</p>
+              <p class="stat-change">📈 +28% this week</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">❤️</div>
+            <div class="stat-info">
+              <h3>Total Likes</h3>
+              <p class="stat-value" id="stat-likes">0</p>
+              <p class="stat-change">📈 +15% trending</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="quick-actions">
+          <h2>Quick Actions</h2>
+          <div class="action-grid">
+            <button class="action-btn" onclick="switchSection('content')">
+              <span class="action-icon">➕</span>
+              <span>Manage Content</span>
+            </button>
+            <button class="action-btn" onclick="switchSection('users')">
+              <span class="action-icon">👥</span>
+              <span>Manage Users</span>
+            </button>
+            <button class="action-btn" onclick="switchSection('ads')">
+              <span class="action-icon">📢</span>
+              <span>Manage Ads</span>
+            </button>
+            <button class="action-btn" onclick="switchSection('settings')">
+              <span class="action-icon">⚙️</span>
+              <span>Site Settings</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="recent-activity">
+          <h2>Recent Activity</h2>
+          <div id="activity-feed" class="activity-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTENT MANAGEMENT SECTION -->
+      <section id="content" class="admin-section">
+        <div class="section-header">
+          <h2>Content Management</h2>
+          <button class="btn-secondary" onclick="refreshContent()">🔄 Refresh</button>
+        </div>
+
+        <div class="content-tabs">
+          <button class="tab-btn active" onclick="filterContent('all')">All Content</button>
+          <button class="tab-btn" onclick="filterContent('music')">🎵 Music</button>
+          <button class="tab-btn" onclick="filterContent('video')">🎥 Videos</button>
+          <button class="tab-btn" onclick="filterContent('pending')">⏳ Pending</button>
+        </div>
+
+        <div class="content-list" id="content-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- USER MANAGEMENT SECTION -->
+      <section id="users" class="admin-section">
+        <div class="section-header">
+          <h2>User Management</h2>
+          <button class="btn-secondary" onclick="exportUsers()">📥 Export</button>
+        </div>
+
+        <div class="users-table-wrapper">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ANALYTICS SECTION -->
+      <section id="analytics" class="admin-section">
+        <div class="section-header">
+          <h2>Analytics & Statistics</h2>
+          <select onchange="changeTimeRange(this.value)">
+            <option value="week">Last 7 Days</option>
+            <option value="month">Last 30 Days</option>
+            <option value="year">Last Year</option>
+          </select>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h3>Top Content</h3>
+            <div id="top-content" class="top-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="analytics-card">
+            <h3>Top Creators</h3>
+            <div id="top-creators" class="top-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div class="analytics-card full-width">
+            <h3>Content Category Distribution</h3>
+            <div id="category-stats" class="category-stats">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADVERTISEMENTS SECTION -->
+      <section id="ads" class="admin-section">
+        <div class="section-header">
+          <h2>Advertisement Management</h2>
+          <button class="btn-secondary" onclick="filterAds('all')">All Ads</button>
+        </div>
+
+        <div class="ads-filters">
+          <button class="filter-btn active" onclick="filterAds('active')">✅ Active</button>
+          <button class="filter-btn" onclick="filterAds('pending')">⏳ Pending</button>
+          <button class="filter-btn" onclick="filterAds('rejected')">❌ Rejected</button>
+        </div>
+
+        <div class="ads-list" id="ads-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- SETTINGS SECTION -->
+      <section id="settings" class="admin-section">
+        <div class="section-header">
+          <h2>Site Settings</h2>
+        </div>
+
+        <div class="settings-grid">
+          <!-- GENERAL SETTINGS -->
+          <div class="settings-card">
+            <h3>🌍 General Settings</h3>
+            <form>
+              <label>
+                <span>Site Name</span>
+                <input type="text" id="setting-sitename" value="VibeStream" placeholder="Site name">
+              </label>
+              <label>
+                <span>Site Description</span>
+                <input type="text" id="setting-description" value="100% Free Entertainment Platform" placeholder="Description">
+              </label>
+              <label>
+                <span>Contact Email</span>
+                <input type="email" id="setting-email" value="admin@vibestream.co.za" placeholder="Contact email">
+              </label>
+              <button type="button" class="btn-primary" onclick="saveSetting('general')">💾 Save Settings</button>
+            </form>
+          </div>
+
+          <!-- FEATURE FLAGS -->
+          <div class="settings-card">
+            <h3>🚀 Features</h3>
+            <label class="toggle-label">
+              <input type="checkbox" id="feature-uploads" checked>
+              <span>Enable Uploads</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="feature-ads" checked>
+              <span>Enable Advertisements</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="feature-podcasts" checked>
+              <span>Enable Podcasts</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="feature-marketplace" checked>
+              <span>Enable Marketplace</span>
+            </label>
+            <button class="btn-primary" onclick="saveSetting('features')">💾 Save Features</button>
+          </div>
+
+          <!-- CONTENT MODERATION -->
+          <div class="settings-card">
+            <h3>🛡️ Content Moderation</h3>
+            <label class="toggle-label">
+              <input type="checkbox" id="mod-auto-approve" checked>
+              <span>Auto-approve uploads</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="mod-explicit-filter">
+              <span>Filter explicit content</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="mod-spam-filter" checked>
+              <span>Enable spam filter</span>
+            </label>
+            <button class="btn-primary" onclick="saveSetting('moderation')">💾 Save Moderation</button>
+          </div>
+
+          <!-- MAINTENANCE -->
+          <div class="settings-card danger">
+            <h3>⚠️ Maintenance</h3>
+            <button class="btn-secondary" onclick="clearCache()">🗑️ Clear Cache</button>
+            <button class="btn-secondary" onclick="exportData()">📥 Export All Data</button>
+            <button class="btn-danger" onclick="resetDatabase()">🔄 Reset Database</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="admin-script.js"></script>
+</body>
+</html>
