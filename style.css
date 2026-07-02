@@ -17,10 +17,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 html, body {
   height: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -162,6 +165,8 @@ body {
 /* MAIN CONTENT */
 .main-content {
   grid-column: 2;
+  min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   background: var(--bg);
 }
@@ -1883,14 +1888,24 @@ body {
 .sidebar-close-btn {
   display: none;
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 20px;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 91, 125, 0.15);
+  border: 1.5px solid rgba(255, 91, 125, 0.5);
+  color: #ff9aac;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   z-index: 101;
+  padding: 6px 12px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 91, 125, 0.3);
+  color: white;
 }
 
 .sidebar-overlay {
@@ -1941,41 +1956,55 @@ body {
    MOBILE  (max-width: 768px)
    ============================================ */
 @media (max-width: 768px) {
-  /* Layout */
-  .app-container {
-    grid-template-columns: 1fr;
+  /* Prevent any horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
   }
 
-  /* Sidebar slides in from left */
+  /* Layout - single column, no sidebar space */
+  .app-container {
+    grid-template-columns: 1fr;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Sidebar hidden off-screen, slides in */
   .sidebar {
-    position: fixed;
-    left: -100%;
+    position: fixed !important;
+    left: -280px !important;
     top: 0;
     width: 260px;
     height: 100vh;
-    z-index: 100;
+    z-index: 200;
     transition: left 0.3s ease;
+    box-shadow: none;
   }
 
   .sidebar.open {
-    left: 0;
+    left: 0 !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
   }
 
   .sidebar-close-btn {
     display: block;
   }
 
-  /* Main content full width */
+  /* Main content fills full width from left edge */
   .main-content {
-    grid-column: 1;
-    width: 100%;
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: 100vw;
+    margin-left: 0 !important;
+    overflow-x: hidden;
   }
 
   /* Top header */
   .top-header {
     padding: 10px 12px;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: nowrap;
+    width: 100%;
   }
 
   .hamburger-btn {
