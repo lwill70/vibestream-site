@@ -549,5 +549,4 @@ function logout() {
   }
 }
 
-// Initialize on load
-window.addEventListener('DOMContentLoaded', initAdmin);
+// NOTE: Admin initializes only through checkAdminAuth() -> initAdmin() after password is verified

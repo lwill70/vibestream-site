@@ -140,14 +140,32 @@ function setupHeroImage() {
 }
 
 // Load data from localStorage
+// Owner account - always available for login
+const OWNER_ACCOUNT = {
+  id: 'owner-1',
+  username: 'LWILL',
+  email: 'lwill70.bl@gmail.com',
+  password: '38841997',
+  role: 'owner',
+  createdAt: '2026-01-01T00:00:00.000Z'
+};
+
 function loadData() {
   state.media = JSON.parse(localStorage.getItem(DATA_KEYS.MEDIA)) || SAMPLE_TRENDING;
   state.uploads = JSON.parse(localStorage.getItem(DATA_KEYS.UPLOADS)) || SAMPLE_UPLOADS;
-  state.profile = JSON.parse(localStorage.getItem(DATA_KEYS.PROFILE)) || { name: 'John Doe', initials: 'JD', bio: '' };
+  state.profile = JSON.parse(localStorage.getItem(DATA_KEYS.PROFILE)) || { name: 'LWILL', initials: 'LW', bio: '' };
   state.currentUser = JSON.parse(localStorage.getItem(DATA_KEYS.CURRENT_USER));
   state.users = JSON.parse(localStorage.getItem(DATA_KEYS.USERS)) || [];
   state.advertisements = JSON.parse(localStorage.getItem(DATA_KEYS.ADVERTISEMENTS)) || [];
   state.podcasts = JSON.parse(localStorage.getItem(DATA_KEYS.PODCASTS)) || [];
+
+  // Always ensure owner account exists in users list
+  const ownerExists = state.users.find(u => u.email === OWNER_ACCOUNT.email);
+  if (!ownerExists) {
+    state.users.unshift(OWNER_ACCOUNT);
+    localStorage.setItem(DATA_KEYS.USERS, JSON.stringify(state.users));
+  }
+
   updateLoginButtonState();
 }
 
