@@ -6,6 +6,10 @@ const DATA_KEYS = {
   PROFILE: 'vibestream_profile',
   FAVORITES: 'vibestream_favorites',
   DOWNLOADS: 'vibestream_downloads',
+  USERS: 'vibestream_users',
+  CURRENT_USER: 'vibestream_current_user',
+  ADVERTISEMENTS: 'vibestream_ads',
+  PODCASTS: 'vibestream_podcasts',
 };
 
 let state = {
@@ -13,6 +17,11 @@ let state = {
   media: [],
   uploads: [],
   profile: { name: 'John Doe', initials: 'JD', bio: '' },
+  currentUser: null,
+  users: [],
+  advertisements: [],
+  podcasts: [],
+  recordingPodcast: null,
 };
 
 // Sample data
@@ -88,10 +97,18 @@ const els = {
   topCreators: document.getElementById('topCreators'),
   uploadDialog: document.getElementById('uploadDialog'),
   profileDialog: document.getElementById('profileDialog'),
-  playerDialog: document.getElementById('playerDialog'),
+  loginDialog: document.getElementById('loginDialog'),
+  advertiseDialog: document.getElementById('advertiseDialog'),
+  podcastDialog: document.getElementById('podcastDialog'),
   uploadForm: document.getElementById('uploadForm'),
   profileForm: document.getElementById('profileForm'),
+  loginForm: document.getElementById('loginForm'),
+  registerForm: document.getElementById('registerForm'),
+  advertiseForm: document.getElementById('advertiseForm'),
+  podcastForm: document.getElementById('podcastForm'),
   profileBtn: document.getElementById('profileBtn'),
+  loginBtn: document.getElementById('loginBtn'),
+  playerDialog: document.getElementById('playerDialog'),
   videoPlayer: document.getElementById('videoPlayer'),
   audioPlayer: document.getElementById('audioPlayer'),
   audioElement: document.getElementById('audioElement'),
@@ -118,6 +135,11 @@ function loadData() {
   state.media = JSON.parse(localStorage.getItem(DATA_KEYS.MEDIA)) || SAMPLE_TRENDING;
   state.uploads = JSON.parse(localStorage.getItem(DATA_KEYS.UPLOADS)) || SAMPLE_UPLOADS;
   state.profile = JSON.parse(localStorage.getItem(DATA_KEYS.PROFILE)) || { name: 'John Doe', initials: 'JD', bio: '' };
+  state.currentUser = JSON.parse(localStorage.getItem(DATA_KEYS.CURRENT_USER));
+  state.users = JSON.parse(localStorage.getItem(DATA_KEYS.USERS)) || [];
+  state.advertisements = JSON.parse(localStorage.getItem(DATA_KEYS.ADVERTISEMENTS)) || [];
+  state.podcasts = JSON.parse(localStorage.getItem(DATA_KEYS.PODCASTS)) || [];
+  updateLoginButtonState();
 }
 
 // Save data to localStorage
@@ -125,6 +147,23 @@ function saveData() {
   localStorage.setItem(DATA_KEYS.MEDIA, JSON.stringify(state.media));
   localStorage.setItem(DATA_KEYS.UPLOADS, JSON.stringify(state.uploads));
   localStorage.setItem(DATA_KEYS.PROFILE, JSON.stringify(state.profile));
+  localStorage.setItem(DATA_KEYS.USERS, JSON.stringify(state.users));
+  localStorage.setItem(DATA_KEYS.ADVERTISEMENTS, JSON.stringify(state.advertisements));
+  localStorage.setItem(DATA_KEYS.PODCASTS, JSON.stringify(state.podcasts));
+  if (state.currentUser) {
+    localStorage.setItem(DATA_KEYS.CURRENT_USER, JSON.stringify(state.currentUser));
+  }
+}
+
+// Update login button state
+function updateLoginButtonState() {
+  if (state.currentUser) {
+    els.loginBtn.textContent = `👤 ${state.currentUser.username}`;
+    els.loginBtn.classList.add('logged-in');
+  } else {
+    els.loginBtn.textContent = 'Login / Register';
+    els.loginBtn.classList.remove('logged-in');
+  }
 }
 
 // Render categories
@@ -209,6 +248,76 @@ function renderBrowse() {
   `).join('');
 }
 
+// Render advertisements
+function renderAdvertisements() {
+  const adsContainer = document.querySelector('[data-section="marketplace"]') || document.getElementById('marketplaceGrid');
+  if (!adsContainer) return;
+
+  if (state.advertisements.length === 0) {
+    adsContainer.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No products listed. Be the first to advertise!</p>';
+    return;
+  }
+
+  adsContainer.innerHTML = state.advertisements.map(ad => `
+    <div class="product-card">
+      <div class="product-card-header">
+        <div>
+          <div class="product-card-title">${ad.productName}</div>
+          <div class="product-card-seller">by ${ad.seller}</div>
+        </div>
+        <div class="product-card-price">${ad.price}</div>
+      </div>
+      <div class="product-card-info">
+        <div>📍 ${ad.location}</div>
+        <div>🚚 ${ad.deliveryType}</div>
+      </div>
+      <p style="font-size: 13px; color: var(--text); margin: 8px 0;">${ad.description}</p>
+      <div class="product-card-contact">
+        <a href="tel:${ad.phone}" class="contact-btn">📞 ${ad.phone}</a>
+        ${ad.whatsapp ? `<a href="https://wa.me/${ad.whatsapp}" target="_blank" class="contact-btn whatsapp">💬 WhatsApp</a>` : ''}
+        ${ad.facebook ? `<a href="${ad.facebook}" target="_blank" class="contact-btn facebook">f Facebook</a>` : ''}
+        ${ad.tiktok ? `<a href="https://tiktok.com/@${ad.tiktok}" target="_blank" class="contact-btn tiktok">TikTok</a>` : ''}
+        ${ad.instagram ? `<a href="https://instagram.com/${ad.instagram}" target="_blank" class="contact-btn instagram">📷 Instagram</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render podcasts
+function renderPodcasts() {
+  const podcastsList = document.getElementById('podcastsList');
+  if (!podcastsList) return;
+
+  if (state.podcasts.length === 0) {
+    podcastsList.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px;">No episodes recorded yet.</p>';
+    return;
+  }
+
+  podcastsList.innerHTML = state.podcasts.map(podcast => `
+    <div class="podcast-item">
+      <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div>
+          <strong>${podcast.title}</strong>
+          <div class="podcast-item .duration">Duration: ${Math.floor(podcast.duration / 60)}:${(podcast.duration % 60).toString().padStart(2, '0')}</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">by ${podcast.creator}</div>
+        </div>
+        <button class="contact-btn" onclick="downloadPodcastEpisode(${podcast.id})">⬇ Download</button>
+      </div>
+      <p style="font-size: 12px; color: var(--text); margin-top: 6px;">${podcast.description}</p>
+      ${podcast.tags ? `<p style="font-size: 11px; color: var(--muted); margin-top: 4px;">Tags: ${podcast.tags}</p>` : ''}
+    </div>
+  `).join('');
+}
+
+// Download podcast episode
+function downloadPodcastEpisode(podcastId) {
+  const podcast = state.podcasts.find(p => p.id === podcastId);
+  if (podcast) {
+    alert(`✅ Download started: ${podcast.title}`);
+    // In a real app, this would download the actual audio file
+  }
+}
+
 // Render top downloads
 function renderTopDownloads() {
   els.topDownloads.innerHTML = TOP_DOWNLOADS.map(item => `
@@ -281,7 +390,7 @@ function bindEvents() {
     if (el) {
       el.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('📣 Advertise With Vibestream\n\nReach thousands of users on our platform.\n\nContact us at: advertise@vibestream.co.za\n\nPromote your music, videos, products and services for FREE!');
+        els.advertiseDialog.showModal();
       });
     }
   });
@@ -293,9 +402,220 @@ function bindEvents() {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        alert('📣 Advertise With Vibestream\n\nReach thousands of users on our platform.\n\nContact us at: advertise@vibestream.co.za\n\nPromote your music, videos, products and services for FREE!');
+        els.advertiseDialog.showModal();
       });
     }
+  });
+
+  // Login button handler
+  els.loginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    els.loginDialog.showModal();
+  });
+
+  // Login/Register tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tabName = e.target.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      if (tabName === 'login') {
+        els.loginForm.style.display = 'block';
+        els.registerForm.style.display = 'none';
+      } else {
+        els.loginForm.style.display = 'none';
+        els.registerForm.style.display = 'block';
+      }
+    });
+  });
+
+  // Login form submission
+  els.loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = els.loginForm.querySelector('input[name="loginEmail"]').value;
+    const password = els.loginForm.querySelector('input[name="loginPassword"]').value;
+
+    // Find user
+    const user = state.users.find(u => u.email === email && u.password === password);
+    if (user) {
+      state.currentUser = user;
+      saveData();
+      updateLoginButtonState();
+      els.loginDialog.close();
+      els.loginForm.reset();
+      alert(`✅ Welcome back, ${user.username}!`);
+    } else {
+      alert('❌ Invalid email or password');
+    }
+  });
+
+  // Register form submission
+  els.registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = els.registerForm.querySelector('input[name="regUsername"]').value;
+    const email = els.registerForm.querySelector('input[name="regEmail"]').value;
+    const password = els.registerForm.querySelector('input[name="regPassword"]').value;
+    const confirm = els.registerForm.querySelector('input[name="regConfirm"]').value;
+
+    if (password !== confirm) {
+      alert('❌ Passwords do not match');
+      return;
+    }
+
+    if (state.users.find(u => u.email === email)) {
+      alert('❌ Email already registered');
+      return;
+    }
+
+    const newUser = {
+      id: Date.now(),
+      username,
+      email,
+      password,
+      createdAt: new Date().toISOString(),
+    };
+
+    state.users.push(newUser);
+    state.currentUser = newUser;
+    saveData();
+    updateLoginButtonState();
+    els.loginDialog.close();
+    els.registerForm.reset();
+    alert(`✅ Account created! Welcome, ${username}!`);
+  });
+
+  // Close dialogs
+  document.getElementById('closeLogin')?.addEventListener('click', () => {
+    els.loginDialog.close();
+  });
+
+  document.getElementById('closeAdvertise')?.addEventListener('click', () => {
+    els.advertiseDialog.close();
+  });
+
+  document.getElementById('closePodcast')?.addEventListener('click', () => {
+    els.podcastDialog.close();
+  });
+
+  // Advertise form submission
+  els.advertiseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ad = {
+      id: Date.now(),
+      productName: els.advertiseForm.querySelector('input[name="productName"]').value,
+      price: els.advertiseForm.querySelector('input[name="price"]').value,
+      location: els.advertiseForm.querySelector('input[name="location"]').value,
+      deliveryType: els.advertiseForm.querySelector('select[name="deliveryType"]').value,
+      phone: els.advertiseForm.querySelector('input[name="phone"]').value,
+      whatsapp: els.advertiseForm.querySelector('input[name="whatsapp"]').value,
+      facebook: els.advertiseForm.querySelector('input[name="facebook"]').value,
+      tiktok: els.advertiseForm.querySelector('input[name="tiktok"]').value,
+      instagram: els.advertiseForm.querySelector('input[name="instagram"]').value,
+      description: els.advertiseForm.querySelector('textarea[name="description"]').value,
+      createdAt: new Date().toISOString(),
+      seller: state.currentUser?.username || 'Anonymous',
+    };
+
+    state.advertisements.unshift(ad);
+    saveData();
+    els.advertiseDialog.close();
+    els.advertiseForm.reset();
+    alert(`✅ Your ad is now live!\n\n${ad.productName}\n${ad.price}\n\nReach thousands of buyers on Vibestream!`);
+  });
+
+  // Podcast recording handlers
+  let mediaRecorder;
+  let audioChunks = [];
+  let recordingStartTime;
+  let recordingInterval;
+
+  document.getElementById('startRecording')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      recordingStartTime = Date.now();
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        state.recordingPodcast = {
+          blob: audioBlob,
+          duration: Math.floor((Date.now() - recordingStartTime) / 1000),
+        };
+      };
+
+      mediaRecorder.start();
+      document.getElementById('podcastStatus').textContent = '🔴 Recording...';
+      document.getElementById('startRecording').style.display = 'none';
+      document.getElementById('stopRecording').style.display = 'block';
+      document.getElementById('pauseRecording').style.display = 'block';
+
+      recordingInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('podcastDuration').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    } catch (err) {
+      alert('❌ Microphone access denied. Please allow microphone access to record.');
+    }
+  });
+
+  document.getElementById('stopRecording')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    mediaRecorder.stop();
+    clearInterval(recordingInterval);
+    document.getElementById('podcastStatus').textContent = '✅ Recording Complete';
+    document.getElementById('stopRecording').style.display = 'none';
+    document.getElementById('pauseRecording').style.display = 'none';
+    document.getElementById('startRecording').style.display = 'block';
+    document.getElementById('podcastForm').style.display = 'block';
+  });
+
+  document.getElementById('downloadPodcast')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (state.recordingPodcast) {
+      const url = URL.createObjectURL(state.recordingPodcast.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `podcast_${Date.now()}.wav`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  els.podcastForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!state.recordingPodcast) {
+      alert('❌ No recording to save');
+      return;
+    }
+
+    const podcast = {
+      id: Date.now(),
+      title: els.podcastForm.querySelector('input[name="podcastTitle"]').value,
+      description: els.podcastForm.querySelector('textarea[name="podcastDesc"]').value,
+      tags: els.podcastForm.querySelector('input[name="podcastTags"]').value,
+      duration: state.recordingPodcast.duration,
+      creator: state.currentUser?.username || 'Anonymous',
+      createdAt: new Date().toISOString(),
+      published: true,
+    };
+
+    state.podcasts.unshift(podcast);
+    saveData();
+    els.podcastDialog.close();
+    els.podcastForm.reset();
+    state.recordingPodcast = null;
+    document.getElementById('podcastStatus').textContent = 'Ready';
+    document.getElementById('podcastDuration').textContent = '0:00';
+    document.getElementById('podcastForm').style.display = 'none';
+    alert(`✅ Podcast Episode Published!\n\n${podcast.title}\n\nListeners can now find your episode!`);
   });
 
   document.getElementById('closeUpload')?.addEventListener('click', () => {

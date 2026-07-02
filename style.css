@@ -1210,6 +1210,344 @@ body {
   transition: width 0.1s linear;
 }
 
+/* TAB STYLES */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--accent);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* AUTH FORMS */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.auth-form input {
+  padding: 10px 12px;
+  background: rgba(31, 113, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(31, 113, 255, 0.1);
+}
+
+/* ADVERTISE FORM */
+.advertise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.advertise-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.advertise-form input,
+.advertise-form select,
+.advertise-form textarea {
+  padding: 10px 12px;
+  background: rgba(31, 113, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.advertise-form input:focus,
+.advertise-form select:focus,
+.advertise-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(31, 113, 255, 0.1);
+}
+
+.advertise-form select {
+  cursor: pointer;
+}
+
+.advertise-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* PODCAST CONTAINER */
+.podcast-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.podcast-info {
+  background: rgba(31, 113, 255, 0.08);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.podcast-info p {
+  margin: 6px 0;
+  color: var(--text);
+}
+
+.podcast-info span {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.podcast-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.podcast-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: rgba(31, 113, 255, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.podcast-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.podcast-form input,
+.podcast-form textarea {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.podcast-form input:focus,
+.podcast-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.podcast-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.recorded-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.recorded-list h4 {
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.podcast-item {
+  background: rgba(31, 113, 255, 0.08);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.podcast-item strong {
+  color: var(--text);
+}
+
+.podcast-item .duration {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* LOGIN BUTTON STYLES */
+.login-link {
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  background: rgba(31, 113, 255, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.login-link.logged-in {
+  background: rgba(47, 224, 176, 0.15);
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.login-link.logged-in:hover {
+  background: rgba(47, 224, 176, 0.25);
+}
+
+/* MARKETPLACE PRODUCTS DISPLAY */
+.product-card {
+  background: linear-gradient(135deg, rgba(31, 113, 255, 0.1) 0%, rgba(0, 210, 255, 0.05) 100%);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(31, 113, 255, 0.2);
+}
+
+.product-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.product-card-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.product-card-price {
+  color: var(--good);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.product-card-seller {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.product-card-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.product-card-contact {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.contact-btn {
+  padding: 6px 10px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.contact-btn:hover {
+  background: #1a58cc;
+}
+
+.contact-btn.whatsapp {
+  background: #25d366;
+}
+
+.contact-btn.whatsapp:hover {
+  background: #1fa855;
+}
+
+.contact-btn.facebook {
+  background: #1877f2;
+}
+
+.contact-btn.facebook:hover {
+  background: #0a66c2;
+}
+
+.contact-btn.tiktok {
+  background: #000;
+}
+
+.contact-btn.tiktok:hover {
+  background: #333;
+}
+
+.contact-btn.instagram {
+  background: #e1306c;
+}
+
+.contact-btn.instagram:hover {
+  background: #c41e54;
+}
+
 .volume-control {
   display: flex;
   align-items: center;

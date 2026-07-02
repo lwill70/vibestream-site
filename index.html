@@ -62,8 +62,14 @@
         <a href="#" class="nav-item" data-nav="graphics" data-section="graphics">
           <span class="nav-icon">🎨</span>
           <span class="nav-text">Graphics / Designs</span>
+        </a>        <a href="#" class="nav-item" data-nav="podcasts" data-section="podcasts">
+          <span class="nav-icon">🎙️</span>
+          <span class="nav-text">Podcasts</span>
         </a>
         <a href="#" class="nav-item" data-nav="marketplace" data-section="marketplace">
+          <span class="nav-icon">🛍️</span>
+          <span class="nav-text">Marketplace</span>
+        </a>        <a href="#" class="nav-item" data-nav="marketplace" data-section="marketplace">
           <span class="nav-icon">🛍️</span>
           <span class="nav-text">Marketplace (Shop)</span>
         </a>
@@ -133,7 +139,7 @@
           <button class="btn-premium">100% FREE</button>
           <button class="btn-theme">☀️</button>
           <button class="btn-profile" id="profileBtn">👤</button>
-          <a href="#" class="login-link">Login / Register</a>
+          <button class="login-link" id="loginBtn">Login / Register</button>
         </div>
       </header>
 
@@ -368,18 +374,184 @@
       <form id="profileForm" class="profile-form">
         <label>
           Display Name
-          <input type="text" placeholder="Your name" maxlength="60" />
+          <input type="text" name="displayName" placeholder="Your name" maxlength="60" />
         </label>
         <label>
           Avatar Initials (2 chars)
-          <input type="text" placeholder="JD" maxlength="2" style="text-transform:uppercase" />
+          <input type="text" name="initials" placeholder="JD" maxlength="2" style="text-transform:uppercase" />
         </label>
         <label>
           Bio
-          <textarea placeholder="Tell us about yourself" maxlength="200" rows="3"></textarea>
+          <textarea name="bio" placeholder="Tell us about yourself" maxlength="200" rows="3"></textarea>
         </label>
         <button type="submit" class="btn-submit">Save</button>
       </form>
+    </div>
+  </dialog>
+
+  <!-- LOGIN / REGISTER DIALOG -->
+  <dialog id="loginDialog" class="dialog">
+    <div class="dialog-box">
+      <button class="dialog-close" id="closeLogin">✕</button>
+      <h3>Welcome to VibeStream</h3>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+      </div>
+
+      <!-- LOGIN TAB -->
+      <form id="loginForm" class="auth-form" style="display: block;">
+        <label>
+          Email
+          <input type="email" name="loginEmail" placeholder="your@email.com" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="loginPassword" placeholder="Enter password" required />
+        </label>
+        <button type="submit" class="btn-submit">Login</button>
+        <p style="text-align: center; color: var(--muted); font-size: 13px; margin-top: 12px;">🔐 Your data is safely stored locally on your device</p>
+      </form>
+
+      <!-- REGISTER TAB -->
+      <form id="registerForm" class="auth-form" style="display: none;">
+        <label>
+          Username
+          <input type="text" name="regUsername" placeholder="Your username" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="regEmail" placeholder="your@email.com" required />
+        </label>
+        <label>
+          Password
+          <input type="password" name="regPassword" placeholder="Create password" required />
+        </label>
+        <label>
+          Confirm Password
+          <input type="password" name="regConfirm" placeholder="Confirm password" required />
+        </label>
+        <button type="submit" class="btn-submit">Register</button>
+        <p style="text-align: center; color: var(--muted); font-size: 13px; margin-top: 12px;">✅ Free account. No credit card needed.</p>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ADVERTISE PRODUCTS DIALOG -->
+  <dialog id="advertiseDialog" class="dialog">
+    <div class="dialog-box">
+      <button class="dialog-close" id="closeAdvertise">✕</button>
+      <h3>📢 Advertise Your Product</h3>
+      <form id="advertiseForm" class="advertise-form">
+        <label>
+          Product Name *
+          <input type="text" name="productName" placeholder="What are you selling?" required />
+        </label>
+        
+        <label>
+          Price *
+          <input type="text" name="price" placeholder="e.g., R299, $19.99" required />
+        </label>
+
+        <label>
+          Location / City *
+          <input type="text" name="location" placeholder="Where are you based?" required />
+        </label>
+
+        <label>
+          Delivery Type *
+          <select name="deliveryType" required>
+            <option value="">Select delivery type</option>
+            <option value="local-pickup">Local Pickup</option>
+            <option value="delivery">Delivery Available</option>
+            <option value="both">Both</option>
+            <option value="digital">Digital/Online</option>
+            <option value="shipping">Nationwide Shipping</option>
+          </select>
+        </label>
+
+        <label>
+          Contact Phone Number *
+          <input type="tel" name="phone" placeholder="e.g., 0731490427" required />
+        </label>
+
+        <label>
+          WhatsApp Number
+          <input type="tel" name="whatsapp" placeholder="WhatsApp number (if different)" />
+        </label>
+
+        <label>
+          Facebook Page
+          <input type="url" name="facebook" placeholder="https://facebook.com/yourpage" />
+        </label>
+
+        <label>
+          TikTok Username
+          <input type="text" name="tiktok" placeholder="@yourusername" />
+        </label>
+
+        <label>
+          Instagram Username
+          <input type="text" name="instagram" placeholder="@yourusername" />
+        </label>
+
+        <label>
+          Product Description
+          <textarea name="description" placeholder="Describe your product or service" rows="3" required></textarea>
+        </label>
+
+        <button type="submit" class="btn-submit">Publish Ad</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- LIVE PODCAST DIALOG -->
+  <dialog id="podcastDialog" class="dialog">
+    <div class="dialog-box">
+      <button class="dialog-close" id="closePodcast">✕</button>
+      <h3>🎙️ Live Podcast Recording</h3>
+      
+      <div class="podcast-container">
+        <div class="podcast-info">
+          <p><strong>Recording Status:</strong> <span id="podcastStatus">Ready</span></p>
+          <p><strong>Duration:</strong> <span id="podcastDuration">0:00</span></p>
+        </div>
+
+        <div class="podcast-controls">
+          <button type="button" class="control-btn primary" id="startRecording">🔴 Start Recording</button>
+          <button type="button" class="control-btn" id="stopRecording" style="display: none;">⏹ Stop Recording</button>
+          <button type="button" class="control-btn" id="pauseRecording" style="display: none;">⏸ Pause</button>
+          <button type="button" class="control-btn" id="resumeRecording" style="display: none;">▶ Resume</button>
+        </div>
+
+        <form id="podcastForm" class="podcast-form" style="display: none; margin-top: 16px;">
+          <label>
+            Podcast Title *
+            <input type="text" name="podcastTitle" placeholder="What's your episode about?" required />
+          </label>
+          
+          <label>
+            Description
+            <textarea name="podcastDesc" placeholder="Episode description" rows="2"></textarea>
+          </label>
+
+          <label>
+            Tags (comma-separated)
+            <input type="text" name="podcastTags" placeholder="e.g., music, lifestyle, education" />
+          </label>
+
+          <div class="podcast-actions">
+            <button type="button" class="btn-action" id="downloadPodcast">⬇️ Download</button>
+            <button type="submit" class="btn-submit">📤 Publish Episode</button>
+          </div>
+        </form>
+
+        <div id="recordedPodcasts" class="recorded-list" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+          <h4>Your Recorded Episodes</h4>
+          <div id="podcastsList"></div>
+        </div>
+      </div>
     </div>
   </dialog>
 
