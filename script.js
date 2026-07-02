@@ -109,6 +109,7 @@ function init() {
   renderBrowse();
   renderTopDownloads();
   renderTopCreators();
+  setupPlayerControls();
   bindEvents();
 }
 
@@ -253,12 +254,48 @@ function bindEvents() {
     });
   });
 
-  // Upload dialog
+  // Upload dialog - sidebar and header buttons
   document.querySelectorAll('[data-nav="upload"], #sidebarUpload, #sidebarUploadBtn').forEach(el => {
-    if (el) el.addEventListener('click', (e) => {
-      e.preventDefault();
-      els.uploadDialog.showModal();
-    });
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        els.uploadDialog.showModal();
+      });
+    }
+  });
+
+  // Top header upload button
+  const uploadTopBtns = document.querySelectorAll('.btn-top');
+  uploadTopBtns.forEach(btn => {
+    if (btn.textContent.includes('Upload')) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        els.uploadDialog.showModal();
+      });
+    }
+  });
+
+  // Advertise button handler - sidebar
+  document.querySelectorAll('[data-nav="advertise"]').forEach(el => {
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('📣 Advertise With Vibestream\n\nReach thousands of users on our platform.\n\nContact us at: advertise@vibestream.co.za\n\nPromote your music, videos, products and services for FREE!');
+      });
+    }
+  });
+
+  // Top header advertise button
+  const advertiseTopBtns = document.querySelectorAll('.btn-top');
+  advertiseTopBtns.forEach(btn => {
+    if (btn.textContent.includes('Advertise')) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        alert('📣 Advertise With Vibestream\n\nReach thousands of users on our platform.\n\nContact us at: advertise@vibestream.co.za\n\nPromote your music, videos, products and services for FREE!');
+      });
+    }
   });
 
   document.getElementById('closeUpload')?.addEventListener('click', () => {
@@ -348,20 +385,64 @@ function bindEvents() {
   });
 }
 
+// Player state
+let playerState = {
+  isPlaying: false,
+  currentTime: 0,
+  duration: 180, // 3 minutes default
+  currentMedia: null,
+  playbackInterval: null,
+  currentType: 'fallback',
+};
+
 // Determine media type for playback
 function getMediaTypeForPlayback(contentType) {
   const type = contentType.toLowerCase();
   if (type.includes('music') || type.includes('remix') || type.includes('mixtape') || type.includes('album') || type.includes('single') || type.includes('ep')) {
     return 'audio';
-  } else if (type.includes('video') || type.includes('movie') || type.includes('series') || type.includes('anime')) {
+  } else if (type.includes('video') || type.includes('movie') || type.includes('series') || type.includes('anime') || type.includes('live')) {
     return 'video';
   }
   return 'fallback';
 }
 
-// Stream media content
+// Format time to MM:SS
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Update progress bar
+function updateProgressBar() {
+  const progress = (playerState.currentTime / playerState.duration) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+  document.getElementById('currentTime').textContent = formatTime(playerState.currentTime);
+}
+
+// Update playback simulation
+function simulatePlayback() {
+  if (playerState.isPlaying) {
+    playerState.currentTime += 1;
+    if (playerState.currentTime >= playerState.duration) {
+      playerState.currentTime = 0;
+      playerState.isPlaying = false;
+      document.getElementById('playBtn').style.display = 'block';
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('detailStatus').textContent = 'Finished';
+    } else {
+      document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
+    }
+    updateProgressBar();
+  }
+}
+
+// Stream media content with enhanced player
 function streamMedia(item, contentUrl = null) {
   const mediaType = getMediaTypeForPlayback(item.type);
+  playerState.currentMedia = item;
+  playerState.currentType = mediaType;
+  playerState.currentTime = 0;
   
   // Set up player dialog
   els.playerDialog.showModal();
@@ -369,83 +450,71 @@ function streamMedia(item, contentUrl = null) {
   document.getElementById('detailTitle').textContent = item.title;
   document.getElementById('detailArtist').textContent = item.artist;
   document.getElementById('detailType').textContent = item.type;
-  document.getElementById('detailStatus').textContent = 'Now Streaming';
+  document.getElementById('detailStatus').textContent = 'Ready to stream';
+  document.getElementById('duration').textContent = formatTime(playerState.duration);
   
-  // Hide all players first
+  // Set album cover icon based on type
+  const coverIcon = item.icon || '🎵';
+  document.getElementById('coverImage').textContent = coverIcon;
+  
+  // Reset UI
   els.videoPlayer.style.display = 'none';
   els.audioPlayer.style.display = 'none';
-  els.fallbackPlayer.style.display = 'none';
+  document.getElementById('playBtn').style.display = 'block';
+  document.getElementById('pauseBtn').style.display = 'none';
+  playerState.isPlaying = false;
   
-  if (mediaType === 'audio') {
-    // Audio playback
-    els.audioPlayer.style.display = 'block';
-    document.getElementById('playerArtist').textContent = item.artist;
-    document.getElementById('playerGenre').textContent = item.type;
-    
-    if (contentUrl) {
-      els.audioElement.src = contentUrl;
-      els.audioElement.play();
-    } else {
-      // Simulate audio playback
-      els.audioElement.src = 'data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==';
-      els.audioElement.play().catch(() => {
-        els.fallbackPlayer.style.display = 'block';
-        els.audioPlayer.style.display = 'none';
-        setupFallbackPlayer(item);
-      });
-    }
-  } else if (mediaType === 'video') {
-    // Video playback
-    els.videoPlayer.style.display = 'block';
-    
-    if (contentUrl) {
-      els.videoPlayer.src = contentUrl;
-      els.videoPlayer.play();
-    } else {
-      // Fallback for video
-      els.videoPlayer.style.display = 'none';
-      els.fallbackPlayer.style.display = 'block';
-      setupFallbackPlayer(item);
-    }
-  } else {
-    // Fallback player
-    els.fallbackPlayer.style.display = 'block';
-    setupFallbackPlayer(item);
+  // Clear any existing playback interval
+  if (playerState.playbackInterval) {
+    clearInterval(playerState.playbackInterval);
   }
+  
+  // Set up playback simulation
+  playerState.playbackInterval = setInterval(simulatePlayback, 1000);
 }
 
-// Setup fallback player with simulated playback
-function setupFallbackPlayer(item) {
-  document.getElementById('fallbackTitle').textContent = item.title;
-  document.getElementById('fallbackArtist').textContent = item.artist;
+// Play media
+function playMedia() {
+  playerState.isPlaying = true;
+  document.getElementById('playBtn').style.display = 'none';
+  document.getElementById('pauseBtn').style.display = 'block';
+  document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
+}
+
+// Pause media
+function pauseMedia() {
+  playerState.isPlaying = false;
+  document.getElementById('playBtn').style.display = 'block';
+  document.getElementById('pauseBtn').style.display = 'none';
+  document.getElementById('detailStatus').textContent = 'Paused';
+}
+
+// Stop media
+function stopMedia() {
+  playerState.isPlaying = false;
+  playerState.currentTime = 0;
+  if (playerState.playbackInterval) {
+    clearInterval(playerState.playbackInterval);
+  }
+  updateProgressBar();
+  document.getElementById('playBtn').style.display = 'block';
+  document.getElementById('pauseBtn').style.display = 'none';
+  document.getElementById('detailStatus').textContent = 'Stopped';
+  els.playerDialog.close();
+}
+
+// Download media file
+function downloadMedia(item) {
+  // Create a simulated download
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(`${item.title} by ${item.artist}`));
+  element.setAttribute('download', `${item.title}-${item.artist}.txt`);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
   
-  let isPlaying = true;
-  
-  els.playPauseBtn.textContent = '⏸ Pause';
-  els.playPauseBtn.onclick = () => {
-    isPlaying = !isPlaying;
-    els.playPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
-    document.getElementById('detailStatus').textContent = isPlaying ? 'Now Streaming' : 'Paused';
-  };
-  
-  els.stopBtn.onclick = () => {
-    els.playerDialog.close();
-    document.getElementById('detailStatus').textContent = 'Stopped';
-  };
-  
-  // Simulate playback with status updates
-  const statusElement = document.getElementById('detailStatus');
-  let simulatedTime = 0;
-  const interval = setInterval(() => {
-    if (isPlaying && !els.playerDialog.hasAttribute('open')) {
-      clearInterval(interval);
-    } else if (isPlaying) {
-      simulatedTime += 1;
-      const minutes = Math.floor(simulatedTime / 60);
-      const seconds = simulatedTime % 60;
-      statusElement.textContent = `Streaming ${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
-  }, 1000);
+  alert(`✓ Download Started: ${item.title}\nby ${item.artist}\n\nThe file will save to your Downloads folder.`);
 }
 
 // Bind media action buttons
@@ -464,7 +533,7 @@ function bindMediaActions(items, type) {
         btn.textContent = '✓ Published';
         btn.disabled = true;
       } else if (btn.classList.contains('btn-download')) {
-        alert(`⬇ Downloading: ${item.title}\nby ${item.artist}\n\n[Download initiated]`);
+        downloadMedia(item);
       } else if (btn.classList.contains('btn-view')) {
         alert(`👁 View Details\n\nTitle: ${item.title}\nArtist: ${item.artist}\nType: ${item.type}\nViews: ${item.views || 0}K\nLikes: ${item.likes || 0}K`);
       }
@@ -472,11 +541,34 @@ function bindMediaActions(items, type) {
   });
 }
 
+// Setup player controls
+function setupPlayerControls() {
+  document.getElementById('playBtn')?.addEventListener('click', playMedia);
+  document.getElementById('pauseBtn')?.addEventListener('click', pauseMedia);
+  document.getElementById('stopBtn')?.addEventListener('click', stopMedia);
+  
+  // Volume control
+  document.getElementById('volumeSlider')?.addEventListener('input', (e) => {
+    const volume = e.target.value;
+    document.getElementById('volumeLevel').textContent = volume + '%';
+    els.audioElement.volume = volume / 100;
+    els.videoPlayer.volume = volume / 100;
+  });
+  
+  // Progress bar click to seek
+  document.querySelector('.progress-bar')?.addEventListener('click', (e) => {
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    playerState.currentTime = percent * playerState.duration;
+    updateProgressBar();
+  });
+}
+
 // Close player dialog
 document.getElementById('closePlayer')?.addEventListener('click', () => {
+  stopMedia();
   els.playerDialog.close();
-  els.videoPlayer.pause();
-  els.audioElement.pause();
 });
 
 // Start

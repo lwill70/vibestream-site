@@ -389,8 +389,16 @@
       <h3 id="playerTitle">Now Playing</h3>
       
       <div class="player-container">
+        <!-- Album Cover / Thumbnail -->
+        <div class="player-cover">
+          <div id="coverImage" class="cover-image">🎵</div>
+          <div class="play-overlay" id="playOverlay">
+            <button class="play-icon">▶</button>
+          </div>
+        </div>
+
         <!-- Video Player -->
-        <video id="videoPlayer" class="media-player" controls style="display: none; width: 100%; background: black; border-radius: 8px;"></video>
+        <video id="videoPlayer" class="media-player" style="display: none; width: 100%; background: black; border-radius: 8px; margin-bottom: 16px;"></video>
         
         <!-- Audio Player -->
         <div id="audioPlayer" class="audio-player" style="display: none;">
@@ -407,18 +415,30 @@
           </div>
           <audio id="audioElement" style="width: 100%; margin-top: 16px;"></audio>
         </div>
+      </div>
 
-        <!-- Fallback Player (for demo content) -->
-        <div id="fallbackPlayer" class="fallback-player">
-          <div class="player-icon">▶</div>
-          <div class="player-info">
-            <div id="fallbackTitle" class="fallback-title">Now Playing</div>
-            <div id="fallbackArtist" class="fallback-artist">Artist Name</div>
+      <!-- Playback Controls -->
+      <div class="player-controls">
+        <div class="control-buttons">
+          <button id="playBtn" class="control-btn primary">▶ Play</button>
+          <button id="pauseBtn" class="control-btn">⏸ Pause</button>
+          <button id="stopBtn" class="control-btn">⏹ Stop</button>
+        </div>
+        
+        <!-- Time and Duration -->
+        <div class="player-time">
+          <span id="currentTime">0:00</span>
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
           </div>
-          <div class="playback-controls">
-            <button id="playPauseBtn" class="control-btn">⏸ Pause</button>
-            <button id="stopBtn" class="control-btn">⏹ Stop</button>
-          </div>
+          <span id="duration">0:00</span>
+        </div>
+
+        <!-- Volume Control -->
+        <div class="volume-control">
+          <label for="volumeSlider">🔊 Volume:</label>
+          <input type="range" id="volumeSlider" min="0" max="100" value="70" class="volume-slider">
+          <span id="volumeLevel">70%</span>
         </div>
       </div>
 
@@ -427,7 +447,7 @@
         <div><strong>Title:</strong> <span id="detailTitle">-</span></div>
         <div><strong>Artist:</strong> <span id="detailArtist">-</span></div>
         <div><strong>Type:</strong> <span id="detailType">-</span></div>
-        <div><strong>Status:</strong> <span id="detailStatus">Streaming</span></div>
+        <div><strong>Status:</strong> <span id="detailStatus">Ready to stream</span></div>
       </div>
     </div>
   </dialog>
