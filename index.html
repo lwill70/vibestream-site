@@ -11,10 +11,12 @@
 </head>
 <body>
   <div class="aurora"></div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <div class="app-container">
     <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="mainSidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn">✕</button>
       <div class="sidebar-brand">
         <div class="brand-icon">▶</div>
         <span class="brand-text">VIBESTREAM</span>
@@ -129,8 +131,9 @@
     <main class="main-content">
       <!-- TOP HEADER -->
       <header class="top-header">
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">☰</button>
         <div class="search-container">
-          <input type="text" placeholder="Search for music, videos, movies, series, graphics and more..." class="search-input" id="searchInput" />
+          <input type="text" placeholder="Search music, videos, movies..." class="search-input" id="searchInput" />
           <button class="search-btn">🔍</button>
         </div>
         <div class="header-right">
@@ -405,7 +408,7 @@
       <form id="loginForm" class="auth-form" style="display: block;">
         <label>
           Email
-          <input type="email" name="loginEmail" placeholder="lwill70.bl@gmail.com" required />
+          <input type="email" name="loginEmail" placeholder="Enter your email address" required />
         </label>
         <label>
           Password
@@ -419,22 +422,22 @@
       <form id="registerForm" class="auth-form" style="display: none;">
         <label>
           Username
-          <input type="text" name="regUsername" placeholder="Your username" required />
+          <input type="text" name="regUsername" placeholder="Choose a username" required />
         </label>
         <label>
           Email
-          <input type="email" name="regEmail" placeholder="lwill70.bl@gmail.com" required />
+          <input type="email" name="regEmail" placeholder="Enter your email address" required />
         </label>
         <label>
           Password
-          <input type="password" name="regPassword" placeholder="Create password" required />
+          <input type="password" name="regPassword" placeholder="Create a strong password" required />
         </label>
         <label>
           Confirm Password
-          <input type="password" name="regConfirm" placeholder="Confirm password" required />
+          <input type="password" name="regConfirm" placeholder="Confirm your password" required />
         </label>
-        <button type="submit" class="btn-submit">Register</button>
-        <p style="text-align: center; color: var(--muted); font-size: 13px; margin-top: 12px;">✅ Free account. No credit card needed.</p>
+        <button type="submit" class="btn-submit">Create Account</button>
+        <p style="text-align: center; color: var(--muted); font-size: 13px; margin-top: 12px;">✅ Free account — no credit card needed.</p>
       </form>
     </div>
   </dialog>

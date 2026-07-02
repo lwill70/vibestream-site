@@ -129,6 +129,38 @@ function init() {
   renderTopCreators();
   setupPlayerControls();
   bindEvents();
+  setupMobileMenu();
+}
+
+// Mobile menu / hamburger
+function setupMobileMenu() {
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('mainSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const closeBtn = document.getElementById('sidebarCloseBtn');
+
+  function openSidebar() {
+    sidebar?.classList.add('open');
+    overlay?.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar?.classList.remove('open');
+    overlay?.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  hamburger?.addEventListener('click', openSidebar);
+  closeBtn?.addEventListener('click', closeSidebar);
+  overlay?.addEventListener('click', closeSidebar);
+
+  // Close sidebar when a nav item is clicked on mobile
+  sidebar?.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
 }
 
 // Setup hero image
@@ -390,6 +422,44 @@ function bindEvents() {
         renderTrending();
       }
     });
+  });
+
+  // Hero buttons
+  document.querySelectorAll('.btn-hero, .btn-hero-alt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.textContent;
+      if (text.includes('Stream')) {
+        // Scroll to trending section
+        document.querySelector('.section')?.scrollIntoView({ behavior: 'smooth' });
+      } else if (text.includes('Download')) {
+        const first = state.media[0] || state.uploads[0];
+        if (first) {
+          downloadMedia(first);
+        } else {
+          alert('Upload content first to enable downloads.');
+        }
+      } else if (text.includes('Upload')) {
+        els.uploadDialog.showModal();
+      } else if (text.includes('Share')) {
+        if (navigator.share) {
+          navigator.share({ title: 'VibeStream', url: 'https://vibestream.co.za' });
+        } else {
+          navigator.clipboard.writeText('https://vibestream.co.za')
+            .then(() => alert('✅ Link copied: https://vibestream.co.za'))
+            .catch(() => alert('Share: https://vibestream.co.za'));
+        }
+      }
+    });
+  });
+
+  // Upload-now promo button
+  document.querySelector('.btn-upload-now')?.addEventListener('click', () => {
+    els.uploadDialog.showModal();
+  });
+
+  // Advertise section button
+  document.querySelector('.btn-advertise')?.addEventListener('click', () => {
+    els.advertiseDialog.showModal();
   });
 
   // Upload dialog - sidebar and header buttons

@@ -1858,3 +1858,336 @@ body {
 .player-details strong {
   color: var(--text);
 }
+
+/* ============================================
+   HAMBURGER / SIDEBAR OVERLAY (Mobile)
+   ============================================ */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 20px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.hamburger-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.sidebar-close-btn {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 101;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 99;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* ============================================
+   TABLET  (max-width: 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+  .app-container {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .sidebar {
+    width: 220px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr 1.4fr;
+    gap: 16px;
+  }
+
+  .hero-right {
+    display: none;
+  }
+
+  .advertise-features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .content-area {
+    grid-template-columns: 1fr 260px;
+    padding: 16px;
+    gap: 16px;
+  }
+}
+
+/* ============================================
+   MOBILE  (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  /* Layout */
+  .app-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar slides in from left */
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    z-index: 100;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-close-btn {
+    display: block;
+  }
+
+  /* Main content full width */
+  .main-content {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  /* Top header */
+  .top-header {
+    padding: 10px 12px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-container {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Hide less important header buttons on small screens */
+  .btn-premium,
+  .btn-theme,
+  .btn-admin {
+    display: none;
+  }
+
+  .btn-top {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  /* Hero */
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 16px;
+  }
+
+  .hero-right {
+    display: none;
+  }
+
+  .hero-middle {
+    min-height: 200px;
+    order: -1;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-hero,
+  .btn-hero-alt {
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+  }
+
+  /* Categories */
+  .categories {
+    padding: 16px;
+  }
+
+  .category-cards {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
+  .category-card {
+    padding: 12px 8px;
+  }
+
+  .category-card .icon {
+    font-size: 20px;
+  }
+
+  .category-card h4 {
+    font-size: 10px;
+  }
+
+  /* Content area */
+  .content-area {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 24px;
+  }
+
+  .sidebar-right {
+    order: -1;
+  }
+
+  .content-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  /* Advertise features */
+  .advertise-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .advertise-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* Browse categories */
+  .browse-categories {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+
+  /* Footer */
+  .footer {
+    padding: 16px;
+    font-size: 10px;
+  }
+
+  /* Dialog */
+  .dialog-box {
+    width: 95vw;
+    max-width: none;
+    padding: 16px;
+    margin: 0 auto;
+  }
+
+  /* Player */
+  .player-box {
+    width: 95vw;
+  }
+
+  .player-cover {
+    width: 140px;
+    height: 140px;
+  }
+
+  .control-buttons {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .control-btn {
+    flex: 1;
+    min-width: 80px;
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+}
+
+/* ============================================
+   SMALL MOBILE  (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  .top-header {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .search-input {
+    font-size: 12px;
+  }
+
+  .hero-title {
+    font-size: 22px;
+  }
+
+  .hero-label {
+    font-size: 12px;
+  }
+
+  .hero-desc {
+    font-size: 12px;
+  }
+
+  .btn-hero,
+  .btn-hero-alt {
+    font-size: 11px;
+    padding: 9px 10px;
+  }
+
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .category-cards {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+
+  .section-header h3 {
+    font-size: 14px;
+  }
+
+  .btn-action {
+    font-size: 9px;
+    padding: 5px 6px;
+  }
+
+  .advertise-features {
+    grid-template-columns: 1fr;
+  }
+
+  .browse-categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .login-link {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+}
