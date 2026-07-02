@@ -1075,6 +1075,18 @@ body {
   margin-bottom: 20px;
   box-shadow: 0 8px 24px rgba(31, 113, 255, 0.3);
   overflow: hidden;
+  animation: albumPulse 2s ease-in-out infinite;
+}
+
+@keyframes albumPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 24px rgba(31, 113, 255, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 32px rgba(31, 113, 255, 0.5), 0 0 20px rgba(0, 210, 255, 0.4);
+  }
 }
 
 .cover-image {
@@ -1086,6 +1098,16 @@ body {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, rgba(31, 113, 255, 0.2) 0%, rgba(0, 210, 255, 0.1) 100%);
+  animation: coverGlow 3s ease-in-out infinite;
+}
+
+@keyframes coverGlow {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 10px rgba(31, 113, 255, 0.6));
+  }
 }
 
 .play-overlay {

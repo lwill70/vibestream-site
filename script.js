@@ -325,13 +325,26 @@ function bindEvents() {
       tracklist: tracklist ? tracklist.split('\n').filter(t => t.trim()) : null,
       description: description || null,
       coverUrl: null,
+      published: true,  // Auto-publish when uploaded
+      publishedAt: new Date().toISOString(),
     };
 
+    // Add to uploads and also to trending (published content)
     state.uploads.unshift(newUpload);
+    state.media.unshift({
+      ...newUpload,
+      views: 0,
+      likes: 0,
+    });
+    
     saveData();
     renderUploads();
+    renderTrending();
     els.uploadDialog.close();
     els.uploadForm.reset();
+    
+    // Show success message
+    alert(`✓ Content Published!\n\n${title}\nby ${artistName || state.profile.name}\n\nYour content is now live and visible to all users!`);
   });
 
   // Profile dialog
@@ -393,7 +406,64 @@ let playerState = {
   currentMedia: null,
   playbackInterval: null,
   currentType: 'fallback',
+  audioContext: null,
+  oscillator: null,
+  gainNode: null,
 };
+
+// Initialize Web Audio API
+function initAudioContext() {
+  if (!playerState.audioContext) {
+    playerState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return playerState.audioContext;
+}
+
+// Start audio playback with sound
+function playAudioWithSound() {
+  if (!playerState.isPlaying) return;
+  
+  try {
+    const ctx = initAudioContext();
+    
+    // Stop any existing oscillator
+    if (playerState.oscillator) {
+      playerState.oscillator.stop();
+      playerState.oscillator.disconnect();
+    }
+    
+    // Create oscillator for sound
+    playerState.oscillator = ctx.createOscillator();
+    playerState.gainNode = ctx.createGain();
+    
+    // Vary frequency based on current time for dynamic sound
+    const baseFreq = 200 + Math.random() * 100;
+    const frequency = baseFreq + (playerState.currentTime % 50);
+    
+    playerState.oscillator.frequency.value = frequency;
+    playerState.oscillator.type = 'sine';
+    playerState.gainNode.gain.value = 0.1; // Quiet so it doesn't startle
+    
+    playerState.oscillator.connect(playerState.gainNode);
+    playerState.gainNode.connect(ctx.destination);
+    playerState.oscillator.start();
+  } catch (err) {
+    console.log('Audio playback note:', err.message);
+  }
+}
+
+// Stop audio playback
+function stopAudioPlayback() {
+  try {
+    if (playerState.oscillator) {
+      playerState.oscillator.stop();
+      playerState.oscillator.disconnect();
+      playerState.oscillator = null;
+    }
+  } catch (err) {
+    console.log('Stop audio note:', err.message);
+  }
+}
 
 // Determine media type for playback
 function getMediaTypeForPlayback(contentType) {
@@ -427,10 +497,16 @@ function simulatePlayback() {
     if (playerState.currentTime >= playerState.duration) {
       playerState.currentTime = 0;
       playerState.isPlaying = false;
+      stopAudioPlayback();
       document.getElementById('playBtn').style.display = 'block';
       document.getElementById('pauseBtn').style.display = 'none';
       document.getElementById('detailStatus').textContent = 'Finished';
     } else {
+      // Update frequency of audio for live sound effect
+      if (playerState.oscillator && playerState.audioContext) {
+        const newFreq = 200 + Math.random() * 100 + (playerState.currentTime % 30);
+        playerState.oscillator.frequency.setTargetAtTime(newFreq, playerState.audioContext.currentTime, 0.1);
+      }
       document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
     }
     updateProgressBar();
@@ -476,6 +552,7 @@ function streamMedia(item, contentUrl = null) {
 // Play media
 function playMedia() {
   playerState.isPlaying = true;
+  playAudioWithSound();
   document.getElementById('playBtn').style.display = 'none';
   document.getElementById('pauseBtn').style.display = 'block';
   document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
@@ -484,6 +561,7 @@ function playMedia() {
 // Pause media
 function pauseMedia() {
   playerState.isPlaying = false;
+  stopAudioPlayback();
   document.getElementById('playBtn').style.display = 'block';
   document.getElementById('pauseBtn').style.display = 'none';
   document.getElementById('detailStatus').textContent = 'Paused';
@@ -492,6 +570,7 @@ function pauseMedia() {
 // Stop media
 function stopMedia() {
   playerState.isPlaying = false;
+  stopAudioPlayback();
   playerState.currentTime = 0;
   if (playerState.playbackInterval) {
     clearInterval(playerState.playbackInterval);
