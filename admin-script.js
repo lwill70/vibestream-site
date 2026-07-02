@@ -1,5 +1,8 @@
 // VIBESTREAM ADMIN DASHBOARD
 
+// Admin security - default password (change this to your preferred password)
+const ADMIN_PASSWORD = 'admin123'; // Change this to a strong password!
+
 // Data keys
 const DATA_KEYS = {
   MEDIA: 'vibestream_media',
@@ -18,6 +21,58 @@ let adminState = {
   advertisements: [],
   podcasts: [],
 };
+
+// Check admin authentication on page load
+document.addEventListener('DOMContentLoaded', () => {
+  checkAdminAuth();
+});
+
+// Check if user is authenticated as admin
+function checkAdminAuth() {
+  const adminToken = localStorage.getItem('admin_authenticated');
+  const loginDialog = document.getElementById('adminLoginDialog');
+  const adminContainer = document.querySelector('.admin-container');
+  
+  if (adminToken === 'true') {
+    // Already authenticated
+    loginDialog.style.display = 'none';
+    adminContainer.style.display = 'grid';
+    initAdmin();
+  } else {
+    // Not authenticated - show login
+    loginDialog.style.display = 'flex';
+    adminContainer.style.display = 'none';
+    setupLoginForm();
+  }
+}
+
+// Setup admin login form
+function setupLoginForm() {
+  const form = document.getElementById('adminLoginForm');
+  const passwordInput = document.getElementById('adminPassword');
+  const loginError = document.getElementById('loginError');
+  
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const enteredPassword = passwordInput.value;
+    
+    if (enteredPassword === ADMIN_PASSWORD) {
+      // Authentication successful
+      localStorage.setItem('admin_authenticated', 'true');
+      loginError.style.display = 'none';
+      document.getElementById('adminLoginDialog').style.display = 'none';
+      document.querySelector('.admin-container').style.display = 'grid';
+      passwordInput.value = '';
+      initAdmin();
+    } else {
+      // Authentication failed
+      loginError.style.display = 'block';
+      loginError.textContent = '❌ Invalid password. Access denied.';
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  });
+}
 
 // Initialize admin dashboard
 function initAdmin() {
@@ -376,6 +431,15 @@ function rejectAd(idx) {
 function viewAd(idx) {
   const ad = adminState.advertisements[idx];
   alert(`📢 Advertisement Details:\n\nProduct: ${ad.productName}\nPrice: ${ad.price}\nLocation: ${ad.location}\nDelivery: ${ad.deliveryType}\nSeller: ${ad.seller}`);
+}
+
+// LOGOUT FUNCTION
+function logout() {
+  if (confirm('🚪 Are you sure you want to logout?')) {
+    localStorage.removeItem('admin_authenticated');
+    window.location.href = 'index.html';
+  }
+}
 }
 
 // SETTINGS
