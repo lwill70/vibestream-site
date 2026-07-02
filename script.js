@@ -24,27 +24,27 @@ let state = {
   recordingPodcast: null,
 };
 
-// Sample data
+// Sample data - with image URLs
 const SAMPLE_TRENDING = [
-  { id: 1, title: 'High Vibes', artist: 'DJ Yung', type: 'MUSIC', views: 2.5, likes: 1.2, icon: '🎵' },
-  { id: 2, title: 'Street Therapy 2', artist: 'DJ P Kay', type: 'MIXTAPE', views: 1.8, likes: 0.9, icon: '🎤' },
-  { id: 3, title: 'The Dark Knight', artist: 'Action', type: 'MOVIE', views: 5.1, likes: 2.8, icon: '🎬' },
-  { id: 4, title: 'Power Book II', artist: 'Series', type: 'SERIES', views: 1.6, likes: 0.8, icon: '📺' },
-  { id: 5, title: 'Believe', artist: 'Official Video', type: 'MUSIC VIDEO', views: 8.3, likes: 4.2, icon: '🎥' },
-  { id: 6, title: 'Album Cover Pack', artist: 'Graphics', type: 'GRAPHICS', views: 0.8, likes: 0.4, icon: '🎨' },
-  { id: 7, title: 'John Wick 4', artist: 'Action', type: 'MOVIE', views: 6.2, likes: 3.1, icon: '🎬' },
-  { id: 8, title: 'Cyberpunk 2077', artist: 'Gaming', type: 'GRAPHICS', views: 2.1, likes: 1.2, icon: '🎮' },
+  { id: 1, title: 'High Vibes', artist: 'DJ Yung', type: 'MUSIC', views: 2.5, likes: 1.2, icon: '🎵', image: 'https://picsum.photos/200/200?random=1' },
+  { id: 2, title: 'Street Therapy 2', artist: 'DJ P Kay', type: 'MIXTAPE', views: 1.8, likes: 0.9, icon: '🎤', image: 'https://picsum.photos/200/200?random=2' },
+  { id: 3, title: 'The Dark Knight', artist: 'Action', type: 'MOVIE', views: 5.1, likes: 2.8, icon: '🎬', image: 'https://picsum.photos/200/200?random=3' },
+  { id: 4, title: 'Power Book II', artist: 'Series', type: 'SERIES', views: 1.6, likes: 0.8, icon: '📺', image: 'https://picsum.photos/200/200?random=4' },
+  { id: 5, title: 'Believe', artist: 'Official Video', type: 'MUSIC VIDEO', views: 8.3, likes: 4.2, icon: '🎥', image: 'https://picsum.photos/200/200?random=5' },
+  { id: 6, title: 'Album Cover Pack', artist: 'Graphics', type: 'GRAPHICS', views: 0.8, likes: 0.4, icon: '🎨', image: 'https://picsum.photos/200/200?random=6' },
+  { id: 7, title: 'John Wick 4', artist: 'Action', type: 'MOVIE', views: 6.2, likes: 3.1, icon: '🎬', image: 'https://picsum.photos/200/200?random=7' },
+  { id: 8, title: 'Cyberpunk 2077', artist: 'Gaming', type: 'GRAPHICS', views: 2.1, likes: 1.2, icon: '🎮', image: 'https://picsum.photos/200/200?random=8' },
 ];
 
 const SAMPLE_UPLOADS = [
-  { id: 101, title: 'New Level', artist: 'DJ Blaze', type: 'REMIX', icon: '🎵' },
-  { id: 102, title: 'Ghetto Gospel', artist: 'Gospel', type: 'MUSIC', icon: '🎤' },
-  { id: 103, title: 'No Mercy', artist: 'Rap', type: 'MUSIC', icon: '🎙️' },
-  { id: 104, title: 'The Equalizer 3', artist: 'Movie', type: 'MOVIE', icon: '🎬' },
-  { id: 105, title: 'The Boys S4', artist: 'Series', type: 'SERIES', icon: '📺' },
-  { id: 106, title: 'Cyberpunk Art', artist: 'Design', type: 'GRAPHICS', icon: '🎨' },
-  { id: 107, title: 'Lonely Heart', artist: 'Music', type: 'SINGLE', icon: '🎵' },
-  { id: 108, title: 'Street King', artist: 'Music', type: 'ALBUM', icon: '💿' },
+  { id: 101, title: 'New Level', artist: 'DJ Blaze', type: 'REMIX', icon: '🎵', image: 'https://picsum.photos/200/200?random=101' },
+  { id: 102, title: 'Ghetto Gospel', artist: 'Gospel', type: 'MUSIC', icon: '🎤', image: 'https://picsum.photos/200/200?random=102' },
+  { id: 103, title: 'No Mercy', artist: 'Rap', type: 'MUSIC', icon: '🎙️', image: 'https://picsum.photos/200/200?random=103' },
+  { id: 104, title: 'The Equalizer 3', artist: 'Movie', type: 'MOVIE', icon: '🎬', image: 'https://picsum.photos/200/200?random=104' },
+  { id: 105, title: 'The Boys S4', artist: 'Series', type: 'SERIES', icon: '📺', image: 'https://picsum.photos/200/200?random=105' },
+  { id: 106, title: 'Cyberpunk Art', artist: 'Design', type: 'GRAPHICS', icon: '🎨', image: 'https://picsum.photos/200/200?random=106' },
+  { id: 107, title: 'Lonely Heart', artist: 'Music', type: 'SINGLE', icon: '🎵', image: 'https://picsum.photos/200/200?random=107' },
+  { id: 108, title: 'Street King', artist: 'Music', type: 'ALBUM', icon: '💿', image: 'https://picsum.photos/200/200?random=108' },
 ];
 
 const CATEGORIES = [
@@ -61,11 +61,11 @@ const CATEGORIES = [
 ];
 
 const TOP_CREATORS = [
-  { initials: 'DM', name: 'DJ Maphorisa', role: 'Artist', followed: false },
-  { initials: 'DK', name: 'Director K', role: 'Filmmaker', followed: false },
-  { initials: 'V', name: 'VisionGFX', role: 'Designer', followed: false },
-  { initials: 'SW', name: 'Street Wear', role: 'Seller', followed: false },
-  { initials: 'KP', name: 'King Promo', role: 'Promoter', followed: false },
+  { initials: 'DM', name: 'DJ Maphorisa', role: 'Artist', followed: false, image: 'https://picsum.photos/80/80?random=201' },
+  { initials: 'DK', name: 'Director K', role: 'Filmmaker', followed: false, image: 'https://picsum.photos/80/80?random=202' },
+  { initials: 'V', name: 'VisionGFX', role: 'Designer', followed: false, image: 'https://picsum.photos/80/80?random=203' },
+  { initials: 'SW', name: 'Street Wear', role: 'Seller', followed: false, image: 'https://picsum.photos/80/80?random=204' },
+  { initials: 'KP', name: 'King Promo', role: 'Promoter', followed: false, image: 'https://picsum.photos/80/80?random=205' },
 ];
 
 const TOP_DOWNLOADS = [
@@ -120,6 +120,7 @@ const els = {
 // Initialize
 function init() {
   loadData();
+  setupHeroImage();
   renderCategories();
   renderTrending();
   renderUploads();
@@ -128,6 +129,14 @@ function init() {
   renderTopCreators();
   setupPlayerControls();
   bindEvents();
+}
+
+// Setup hero image
+function setupHeroImage() {
+  const heroImage = document.getElementById('heroImage');
+  if (heroImage) {
+    heroImage.style.backgroundImage = 'url("https://picsum.photos/600/400?random=hero")';
+  }
 }
 
 // Load data from localStorage
@@ -195,7 +204,7 @@ function renderTrending() {
 
   els.trendingGrid.innerHTML = items.map((item, idx) => `
     <div class="content-card" data-content-id="trending-${idx}">
-      <div class="content-card-img">${item.icon}</div>
+      <div class="content-card-img" style="background-image: url('${item.image}'); background-size: cover; background-position: center;"><img src="${item.image}" style="display:none;" onerror="this.parentElement.innerHTML='${item.icon}'"/></div>
       <div class="content-card-info">
         <div class="content-card-label">${item.type}</div>
         <div class="content-card-title">${item.title}</div>
@@ -220,7 +229,7 @@ function renderTrending() {
 function renderUploads() {
   els.uploadsGrid.innerHTML = state.uploads.map((item, idx) => `
     <div class="content-card" data-content-id="upload-${idx}">
-      <div class="content-card-img">${item.icon}</div>
+      <div class="content-card-img" style="background-image: url('${item.image}'); background-size: cover; background-position: center;"><img src="${item.image}" style="display:none;" onerror="this.parentElement.innerHTML='${item.icon}'"/></div>
       <div class="content-card-info">
         <div class="content-card-label">UPLOAD</div>
         <div class="content-card-title">${item.title}</div>
@@ -329,7 +338,9 @@ function renderTopDownloads() {
 function renderTopCreators() {
   els.topCreators.innerHTML = TOP_CREATORS.map((creator, idx) => `
     <div class="creator-item">
-      <div class="creator-avatar">${creator.initials}</div>
+      <div class="creator-avatar" style="background-image: url('${creator.image}'); background-size: cover; background-position: center;">
+        <img src="${creator.image}" style="display:none;" onerror="this.parentElement.innerHTML='${creator.initials}'"/>
+      </div>
       <div class="creator-info">
         <div class="creator-name">${creator.name}</div>
         <div class="creator-role">${creator.role}</div>

@@ -1499,6 +1499,93 @@ body {
   flex-wrap: wrap;
 }
 
+/* IMAGE ENHANCEMENTS */
+
+/* Hero Image */
+.hero-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(31, 113, 255, 0.2) 0%, rgba(0, 210, 255, 0.1) 100%);
+  background-image: url('https://picsum.photos/600/400?random=hero');
+  background-size: cover;
+  background-position: center;
+  background-attachment: local;
+  box-shadow: 0 8px 32px rgba(31, 113, 255, 0.2);
+  border: 1px solid var(--border);
+}
+
+/* Content Card Images */
+.content-card {
+  overflow: hidden;
+}
+
+.content-card-img {
+  width: 100%;
+  height: 140px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(135deg, rgba(31, 113, 255, 0.1) 0%, rgba(0, 210, 255, 0.05) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-card-img img {
+  display: none !important;
+}
+
+/* Creator Avatar with Image */
+.creator-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.creator-avatar:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(31, 113, 255, 0.3);
+}
+
+.creator-avatar img {
+  display: none !important;
+}
+
+/* Category Card Images */
+.category-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(31, 113, 255, 0.05) 0%, rgba(0, 210, 255, 0.02) 100%);
+  z-index: 1;
+}
+
+.category-card:hover {
+  background: linear-gradient(135deg, rgba(31, 113, 255, 0.15) 0%, rgba(0, 210, 255, 0.08) 100%);
+}
+}
+
 .contact-btn {
   padding: 6px 10px;
   background: var(--accent);
