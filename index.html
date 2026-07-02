@@ -303,11 +303,15 @@
       <form id="uploadForm" class="upload-form">
         <label>
           Title
-          <input type="text" placeholder="Enter title" required />
+          <input type="text" name="title" placeholder="Enter title" required />
+        </label>
+        <label>
+          Artist Name
+          <input type="text" name="artistName" placeholder="Your artist/creator name" required />
         </label>
         <label>
           Category
-          <select required>
+          <select name="category" required>
             <option value="">Select category</option>
             <option value="music">Music</option>
             <option value="album">Album</option>
@@ -324,12 +328,28 @@
           </select>
         </label>
         <label>
+          Album Name (for music releases)
+          <input type="text" name="albumName" placeholder="Optional - Album or project name" />
+        </label>
+        <label>
+          Features (Collaborators)
+          <input type="text" name="features" placeholder="Optional - Artist names, comma-separated" />
+        </label>
+        <label>
+          Album Cover / Thumbnail
+          <input type="file" name="cover" accept="image/*" />
+        </label>
+        <label>
+          Tracklist (for albums/playlists)
+          <textarea name="tracklist" placeholder="Optional - Enter track names, one per line" rows="3"></textarea>
+        </label>
+        <label>
           Description
-          <textarea placeholder="Enter description" rows="3"></textarea>
+          <textarea name="description" placeholder="Enter description" rows="2"></textarea>
         </label>
         <label>
           Upload File
-          <input type="file" accept="image/*,video/*,audio/*" />
+          <input type="file" name="mediaFile" accept="image/*,video/*,audio/*" />
         </label>
         <button type="submit" class="btn-submit">Upload</button>
       </form>

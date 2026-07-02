@@ -246,14 +246,24 @@ function bindEvents() {
   els.uploadForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const title = els.uploadForm.querySelector('input[name="title"]').value;
+    const artistName = els.uploadForm.querySelector('input[name="artistName"]').value;
     const category = els.uploadForm.querySelector('select[name="category"]').value;
+    const albumName = els.uploadForm.querySelector('input[name="albumName"]').value;
+    const features = els.uploadForm.querySelector('input[name="features"]').value;
+    const tracklist = els.uploadForm.querySelector('textarea[name="tracklist"]').value;
+    const description = els.uploadForm.querySelector('textarea[name="description"]').value;
     
     const newUpload = {
       id: Date.now(),
       title,
-      artist: state.profile.name,
+      artist: artistName || state.profile.name,
       type: category.toUpperCase(),
       icon: '🎵',
+      albumName: albumName || null,
+      features: features || null,
+      tracklist: tracklist ? tracklist.split('\n').filter(t => t.trim()) : null,
+      description: description || null,
+      coverUrl: null,
     };
 
     state.uploads.unshift(newUpload);
