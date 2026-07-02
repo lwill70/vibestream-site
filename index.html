@@ -6,377 +6,357 @@
   <title>VibeStream | Creator Streaming Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="aurora" aria-hidden="true"></div>
+  <div class="aurora"></div>
 
-  <div class="app-shell">
+  <div class="app-container">
     <!-- LEFT SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="brand">
-          <svg class="brand-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5 3v18h14V3H5zm2 2h10v10H7V5zm10 12H7v-2h10v2z"/>
-          </svg>
-          <h1 class="brand-name">VIBESTREAM</h1>
-        </div>
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">▶</div>
+        <span class="brand-text">VIBESTREAM</span>
       </div>
 
-      <nav class="sidebar-nav" aria-label="Main navigation">
-        <div class="nav-section">
-          <a href="#" class="nav-item active" data-section="all">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Home</span>
-          </a>
-          <a href="#" class="nav-item" data-section="music">
-            <span class="nav-icon">🎵</span>
-            <span class="nav-label">Music</span>
-          </a>
-          <a href="#" class="nav-item" data-section="videos">
-            <span class="nav-icon">🎬</span>
-            <span class="nav-label">Videos</span>
-          </a>
-          <a href="#" class="nav-item" data-section="series">
-            <span class="nav-icon">📺</span>
-            <span class="nav-label">Series</span>
-          </a>
-          <a href="#" class="nav-item" data-section="graphics">
-            <span class="nav-icon">🎨</span>
-            <span class="nav-label">Graphics</span>
-          </a>
-          <a href="#" class="nav-item" data-section="marketplace">
-            <span class="nav-icon">🛍️</span>
-            <span class="nav-label">Marketplace</span>
-          </a>
-        </div>
-
-        <div class="nav-section">
-          <a href="#" class="nav-item" id="trendingNav" data-section="trending">
-            <span class="nav-icon">🔥</span>
-            <span class="nav-label">Trending</span>
-          </a>
-          <a href="#" class="nav-item" id="uploadNav" data-section="upload">
-            <span class="nav-icon">⬆️</span>
-            <span class="nav-label">Upload</span>
-          </a>
-          <a href="#" class="nav-item" id="advertiseNav" data-section="advertise">
-            <span class="nav-icon">📢</span>
-            <span class="nav-label">Advertise</span>
-          </a>
-        </div>
-      </nav>
-
-      <div class="sidebar-divider"></div>
-
-      <div class="playlist-section">
-        <p class="section-title">PLAYLIST</p>
-        <a href="#" class="playlist-item" data-section="favorites">
-          <span class="icon">❤️</span>
-          <span>My Favorites</span>
-        </a>
-        <a href="#" class="playlist-item" data-section="history">
-          <span class="icon">⏱️</span>
-          <span>Watch Later</span>
-        </a>
-        <a href="#" class="playlist-item" data-section="downloads">
-          <span class="icon">⬇️</span>
-          <span>My Downloads</span>
-        </a>
-        <a href="#" class="playlist-item" data-section="recent">
-          <span class="icon">🕐</span>
-          <span>Recent Played</span>
+      <!-- HOME -->
+      <div class="nav-section">
+        <a href="#" class="nav-item active" data-nav="home">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">HOME</span>
         </a>
       </div>
 
-      <div class="sidebar-divider"></div>
+      <!-- BROWSE -->
+      <div class="nav-section">
+        <div class="section-label">BROWSE</div>
+        <a href="#" class="nav-item" data-nav="music" data-section="music">
+          <span class="nav-icon">♫</span>
+          <span class="nav-text">Music</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="mixtapes" data-section="mixtapes">
+          <span class="nav-icon">💿</span>
+          <span class="nav-text">Mixtapes</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="albums" data-section="albums">
+          <span class="nav-icon">💿</span>
+          <span class="nav-text">Albums</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="eps" data-section="eps">
+          <span class="nav-icon">🎵</span>
+          <span class="nav-text">EPs</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="videos" data-section="videos">
+          <span class="nav-icon">🎬</span>
+          <span class="nav-text">Music Videos</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="movies" data-section="movies">
+          <span class="nav-icon">🎥</span>
+          <span class="nav-text">Movies</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="series" data-section="series">
+          <span class="nav-icon">📺</span>
+          <span class="nav-text">Series / TV Shows</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="graphics" data-section="graphics">
+          <span class="nav-icon">🎨</span>
+          <span class="nav-text">Graphics / Designs</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="marketplace" data-section="marketplace">
+          <span class="nav-icon">🛍️</span>
+          <span class="nav-text">Marketplace (Shop)</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="trending" data-section="trending">
+          <span class="nav-icon">🔥</span>
+          <span class="nav-text">Trending</span>
+        </a>
+      </div>
 
-      <div class="premium-banner">
-        <div class="premium-icon">👑</div>
-        <h3>Go Premium</h3>
-        <p>Stream and download without limits, plus exclusive perks.</p>
-        <button class="btn-premium">Upgrade Now</button>
+      <!-- EXTRAS -->
+      <div class="nav-section">
+        <div class="section-label">EXTRAS</div>
+        <a href="#" class="nav-item" data-nav="marketplace-shop">
+          <span class="nav-icon">🛍️</span>
+          <span class="nav-text">Marketplace (Shop)</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="upload" id="sidebarUpload">
+          <span class="nav-icon">⬆️</span>
+          <span class="nav-text">Upload Content</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="advertise">
+          <span class="nav-icon">📢</span>
+          <span class="nav-text">Advertise With Us</span>
+        </a>
+      </div>
+
+      <!-- MY STUFF -->
+      <div class="nav-section">
+        <div class="section-label">MY STUFF</div>
+        <a href="#" class="nav-item" data-nav="favorites">
+          <span class="nav-icon">❤️</span>
+          <span class="nav-text">My Favorites</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="downloads">
+          <span class="nav-icon">⬇️</span>
+          <span class="nav-text">My Downloads</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="later">
+          <span class="nav-icon">⏱️</span>
+          <span class="nav-text">Watch Later</span>
+        </a>
+        <a href="#" class="nav-item" data-nav="recent">
+          <span class="nav-icon">🕐</span>
+          <span class="nav-text">Recently Played</span>
+        </a>
+      </div>
+
+      <!-- 100% FREE BANNER -->
+      <div class="free-banner">
+        <div class="free-banner-title">100% FREE</div>
+        <p>Everything on Vibestream is completely free. No subscriptions. No limits. No hidden fees. Pure entertainment.</p>
+        <button class="btn-learn">LEARN MORE</button>
       </div>
     </aside>
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-      <!-- TOP BAR -->
-      <header class="topbar">
-        <label class="search-box">
-          <input type="search" id="searchInput" placeholder="Search for music, videos, movies, series, graphics and more..." />
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-        </label>
-
-        <div class="topbar-actions">
-          <button class="btn-primary" id="createBtn">+ Create</button>
-          <button class="icon-btn" id="notificationBtn" aria-label="Notifications">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-          </button>
-          <button class="icon-btn" id="messageBtn" aria-label="Messages">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </button>
-          <button class="icon-btn" id="cartBtn" aria-label="Shopping cart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span class="cart-badge">1</span>
-          </button>
-          <button class="profile-btn" id="profileBtn">
-            <span class="profile-initials" id="avatarInitials">JD</span>
-            <span class="profile-name">John Doe</span>
-          </button>
+      <!-- TOP HEADER -->
+      <header class="top-header">
+        <div class="search-container">
+          <input type="text" placeholder="Search for music, videos, movies, series, graphics and more..." class="search-input" id="searchInput" />
+          <button class="search-btn">🔍</button>
+        </div>
+        <div class="header-right">
+          <button class="btn-top">⬆️ Upload</button>
+          <button class="btn-top">📢 Advertise</button>
+          <button class="btn-premium">100% FREE</button>
+          <button class="btn-theme">☀️</button>
+          <button class="btn-profile" id="profileBtn">👤</button>
+          <a href="#" class="login-link">Login / Register</a>
         </div>
       </header>
 
-      <!-- HERO SECTION - 3 COLUMN LAYOUT -->
-      <section class="hero-section">
-        <!-- LEFT: TEXT CONTENT -->
+      <!-- HERO SECTION -->
+      <section class="hero">
         <div class="hero-left">
-          <p class="hero-label">WELCOME TO</p>
-          <h1 class="hero-title">VIBE<span>STREAM</span></h1>
-          <p class="hero-subtitle">Stream, Download, Upload, Sell & Advertise. Everything you love. One platform.</p>
+          <h2 class="hero-label">YOUR WORLD.</h2>
+          <h1 class="hero-title">ALL ENTERTAINMENT.</h1>
+          <p class="hero-tag">100% FREE</p>
+          <p class="hero-desc">Stream, download, upload and share your favorite music, videos, movies, series, graphics and more. Everything is free on Vibestream.</p>
           <div class="hero-buttons">
-            <button class="btn-primary" id="startStreaming">▶ Start Streaming</button>
-            <button class="btn-secondary" id="uploadOpen">Upload Content</button>
+            <button class="btn-hero">▶ Stream Free</button>
+            <button class="btn-hero-alt">⬇ Download Free</button>
+            <button class="btn-hero-alt">⬆ Upload Free</button>
+            <button class="btn-hero-alt">→ Share Free</button>
           </div>
         </div>
 
-        <!-- MIDDLE: FEATURED IMAGE -->
         <div class="hero-middle">
-          <div class="featured-image" id="featuredImage">
-            <div class="image-overlay"></div>
-            <p class="image-label">Featured Creator</p>
-          </div>
+          <div class="hero-img" id="heroImage"></div>
         </div>
 
-        <!-- RIGHT: ADVERTISE BOX -->
         <div class="hero-right">
-          <div class="advertise-box">
-            <h2>ADVERTISE YOUR BUSINESS HERE</h2>
-            <p>Reach thousands of active audience daily</p>
-            <button class="btn-primary" id="advertiseNow">Advertise Now</button>
+          <div class="free-box">
+            <div class="free-box-icon">🎁</div>
+            <h3>100% FREE FOREVER</h3>
+            <p>No subscriptions. No hidden fees. Everything is free!</p>
+            <p class="small">Enjoy unlimited entertainment.</p>
           </div>
         </div>
       </section>
 
-      <!-- CATEGORY CARDS -->
-      <section class="category-section">
-        <div class="category-grid" id="statsStrip"></div>
+      <!-- CATEGORY STRIP -->
+      <section class="categories">
+        <div id="categoryGrid" class="category-cards"></div>
       </section>
 
-      <!-- MAIN CONTENT: TRENDING + UPLOADS + ADS + SIDEBAR -->
-      <div class="content-layout">
-        <!-- LEFT: FEED COLUMN -->
-        <div class="feed-column">
+      <!-- MAIN CONTENT AREA -->
+      <div class="content-area">
+        <!-- LEFT FEED -->
+        <div class="feed">
           <!-- TRENDING NOW -->
-          <div class="section-head">
-            <h2>Trending Now</h2>
-            <a href="#" class="view-all">View All</a>
+          <div class="section">
+            <div class="section-header">
+              <h3>Trending Now</h3>
+              <a href="#" class="view-all">VIEW ALL</a>
+            </div>
+            <div id="trendingGrid" class="content-grid"></div>
           </div>
-          <div id="trendingGrid" class="trending-grid"></div>
 
           <!-- LATEST UPLOADS -->
-          <div class="section-head" style="margin-top: 40px;">
-            <h2>Latest Uploads</h2>
-            <a href="#" class="view-all">View All</a>
+          <div class="section">
+            <div class="section-header">
+              <h3>Latest Uploads</h3>
+              <a href="#" class="view-all">VIEW ALL</a>
+            </div>
+            <div id="uploadsGrid" class="content-grid"></div>
           </div>
-          <div id="latestStrip" class="uploads-strip"></div>
 
-          <!-- FEATURED ADS -->
-          <div class="section-head" style="margin-top: 40px;">
-            <h2>Featured Advertisements</h2>
+          <!-- BROWSE BY CATEGORIES -->
+          <div class="section">
+            <div class="section-header">
+              <h3>Browse By Categories</h3>
+            </div>
+            <div id="browseGrid" class="browse-categories"></div>
           </div>
-          <div id="adGrid" class="ads-grid"></div>
+
+          <!-- ADVERTISE SECTION -->
+          <div class="advertise-banner">
+            <div class="advertise-content">
+              <div class="advertise-icon">📢</div>
+              <div class="advertise-text">
+                <h4>ADVERTISE YOUR BUSINESS FOR FREE</h4>
+                <p>Promote your brand, products or services in thousands. It's easy and simple. Join Vibestream. It's 100% free to advertise!</p>
+              </div>
+              <button class="btn-advertise">ADVERTISE FREE NOW</button>
+            </div>
+            <div class="advertise-features">
+              <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div class="feature-text">
+                  <strong>No Limits</strong>
+                  <p>Unlimited streaming<br/>and downloads</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-text">
+                  <strong>Fast & Easy</strong>
+                  <p>Quick access to all<br/>your favorites</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="feature-icon">💻</div>
+                <div class="feature-text">
+                  <strong>All Devices</strong>
+                  <p>Works on mobile,<br/>tablet and desktop</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-text">
+                  <strong>Safe & Secure</strong>
+                  <p>Your data stays<br/>with us</p>
+                </div>
+              </div>
+              <div class="feature">
+                <div class="feature-icon">💰</div>
+                <div class="feature-text">
+                  <strong>Always Free</strong>
+                  <p>No ads will<br/>always be free</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- RIGHT: SIDEBAR COLUMN -->
+        <!-- RIGHT SIDEBAR -->
         <aside class="sidebar-right">
-          <!-- TOP CREATORS -->
-          <div class="widget">
-            <div class="widget-head">
-              <h3>Top Creators</h3>
-              <a href="#" class="view-all">View All</a>
+          <!-- TOP DOWNLOADS -->
+          <div class="panel">
+            <div class="panel-header">
+              <h4>Top Downloads</h4>
+              <a href="#" class="view-all-sm">VIEW ALL</a>
             </div>
-            <div id="creatorsList" class="creators-grid"></div>
+            <ol id="topDownloads" class="downloads-list"></ol>
           </div>
 
-          <!-- TOP PLAYLISTS -->
-          <div class="widget" style="margin-top: 30px;">
-            <div class="widget-head">
-              <h3>Top Playlist</h3>
-              <a href="#" class="view-all">View All</a>
+          <!-- TOP CREATORS -->
+          <div class="panel">
+            <div class="panel-header">
+              <h4>Top Creators</h4>
+              <a href="#" class="view-all-sm">VIEW ALL</a>
             </div>
-            <ol id="playlistList" class="playlist-ranked"></ol>
+            <div id="topCreators" class="creators-list"></div>
+          </div>
+
+          <!-- UPLOAD PROMO -->
+          <div class="upload-promo">
+            <div class="promo-icon">⬆️</div>
+            <h4>Upload Your Content</h4>
+            <p>Share your talent with the world. Upload music, videos, movies, series or graphics for free.</p>
+            <button class="btn-upload-now" id="sidebarUploadBtn">UPLOAD NOW</button>
           </div>
         </aside>
       </div>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <p>© 2024 Vibestream. All rights reserved. | <a href="#">About Us</a> | <a href="#">DMCA</a> | <a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a> | <a href="#">FAQ</a></p>
+        <div class="social">
+          <span>Follow Us:</span>
+          <a href="#">f</a>
+          <a href="#">𝕏</a>
+          <a href="#">📷</a>
+          <a href="#">▶</a>
+        </div>
+      </footer>
     </main>
   </div>
 
-  <!-- NOW PLAYING BAR -->
-  <div class="now-playing" id="nowPlayingBar">
-    <p id="nowPlayingText">Nothing playing</p>
-    <audio id="audioPlayer" controls></audio>
-    <button class="btn-outline" id="queueRandom">Queue Random</button>
-  </div>
-
-  <!-- UPLOAD DIALOG -->
-  <dialog id="uploadDialog">
-    <form id="uploadForm" method="dialog">
-      <header class="dialog-header">
-        <h3>Upload New Content</h3>
-        <p>Fill details below, then publish to add content to your dashboard.</p>
-      </header>
-
-      <section class="upload-grid">
-        <div class="upload-section">
-          <h4>Content Details</h4>
-          <label>
-            Title
-            <input name="title" placeholder="Summer Vibe Session" />
-          </label>
-          <label>
-            Category
-            <select name="category" required>
-              <option value="music">Music</option>
-              <option value="album">Album</option>
-              <option value="single">Single</option>
-              <option value="ep">EP</option>
-              <option value="mixtape">Mixtape</option>
-              <option value="music video">Music Video</option>
-              <option value="videos">Video</option>
-              <option value="movie">Movie</option>
-              <option value="series">Series</option>
-              <option value="podcast">Podcast</option>
-              <option value="graphics">Graphics</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-          <label>
-            Genre
-            <select name="genre">
-              <option value="afrobeats" selected>Afrobeats</option>
-              <option value="hip hop">Hip Hop</option>
-              <option value="r&b">R&B</option>
-              <option value="amapiano">Amapiano</option>
-              <option value="dancehall">Dancehall</option>
-              <option value="gospel">Gospel</option>
-              <option value="podcast">Podcast Talk</option>
-              <option value="cinematic">Cinematic</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-          <label>
-            Creator Name
-            <input name="creator" required placeholder="Your stage name" />
-          </label>
-        </div>
-
-        <div class="upload-section">
-          <h4>Upload Files</h4>
-          <label>
-            Audio/Video Files (optional)
-            <input type="file" name="mediaFiles" id="mediaFiles" accept="audio/*,video/*" multiple />
-          </label>
-          <p class="field-note">Pick files in multiple rounds. New selections are added to the queue.</p>
-        </div>
-      </section>
-
-      <div class="pending-files" id="pendingFilesWrap">
-        <div class="pending-files-head">
-          <span>Selected Files</span>
-          <button type="button" class="btn-link" id="clearPendingFiles">Clear</button>
-        </div>
-        <ul id="pendingFilesList"></ul>
-      </div>
-
-      <menu class="dialog-actions">
-        <button class="btn-secondary" type="button" id="uploadCancel">Cancel</button>
-        <button class="btn-primary" type="submit">Publish</button>
-      </menu>
-    </form>
-  </dialog>
-
-  <!-- PROFILE DIALOG -->
-  <dialog id="profileDialog">
-    <form id="profileForm">
-      <header class="dialog-header">
-        <h3>My Profile</h3>
-        <p>Edit your creator details. Saved locally on this device.</p>
-      </header>
-      <div class="profile-grid">
+  <!-- DIALOGS -->
+  <dialog id="uploadDialog" class="dialog">
+    <div class="dialog-box">
+      <button class="dialog-close" id="closeUpload">✕</button>
+      <h3>Upload New Content</h3>
+      <form id="uploadForm" class="upload-form">
         <label>
-          Display Name
-          <input name="displayName" maxlength="60" placeholder="Your name" autocomplete="name" />
+          Title
+          <input type="text" placeholder="Enter title" required />
         </label>
         <label>
-          Avatar Initials (2 characters)
-          <input name="initials" maxlength="2" placeholder="JD" style="text-transform:uppercase" />
-        </label>
-        <label>
-          Bio
-          <textarea name="bio" maxlength="200" rows="3" placeholder="Tell the world about yourself..."></textarea>
-        </label>
-      </div>
-      <menu class="dialog-actions">
-        <button class="btn-secondary" type="button" id="profileClose">Close</button>
-        <button class="btn-primary" type="submit">Save Profile</button>
-      </menu>
-    </form>
-  </dialog>
-
-  <!-- SPOTLIGHT DIALOG -->
-  <dialog id="spotlightDialog">
-    <form id="spotlightForm">
-      <header class="dialog-header">
-        <h3>Join Creator Spotlight</h3>
-        <p>Submit your info to be featured in the weekly community spotlight. Completely free.</p>
-      </header>
-      <div class="profile-grid">
-        <label>
-          Creator / Stage Name
-          <input name="spotName" required maxlength="80" placeholder="Your stage name" />
-        </label>
-        <label>
-          Email Address
-          <input type="email" name="spotEmail" required maxlength="120" placeholder="contact@example.com" />
-        </label>
-        <label>
-          What you create
-          <select name="spotRole">
-            <option value="music">Music / Audio</option>
-            <option value="video">Video / Film</option>
-            <option value="design">Graphic Design</option>
+          Category
+          <select required>
+            <option value="">Select category</option>
+            <option value="music">Music</option>
+            <option value="album">Album</option>
+            <option value="single">Single</option>
+            <option value="ep">EP</option>
+            <option value="mixtape">Mixtape</option>
+            <option value="video">Music Video</option>
+            <option value="movie">Movie</option>
+            <option value="series">Series</option>
             <option value="podcast">Podcast</option>
-            <option value="merch">Merchandise / Products</option>
+            <option value="graphics">Graphics</option>
+            <option value="marketplace">Marketplace</option>
             <option value="other">Other</option>
           </select>
         </label>
         <label>
-          Short Bio / Why you should be featured
-          <textarea name="spotBio" maxlength="400" rows="4" placeholder="Describe your work and why you deserve the spotlight..."></textarea>
+          Description
+          <textarea placeholder="Enter description" rows="3"></textarea>
         </label>
-      </div>
-      <menu class="dialog-actions">
-        <button class="btn-secondary" type="button" id="spotlightClose">Cancel</button>
-        <button class="btn-primary" type="submit">Submit Application</button>
-      </menu>
-    </form>
+        <label>
+          Upload File
+          <input type="file" accept="image/*,video/*,audio/*" />
+        </label>
+        <button type="submit" class="btn-submit">Upload</button>
+      </form>
+    </div>
   </dialog>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="profileDialog" class="dialog">
+    <div class="dialog-box">
+      <button class="dialog-close" id="closeProfile">✕</button>
+      <h3>User Profile</h3>
+      <form id="profileForm" class="profile-form">
+        <label>
+          Display Name
+          <input type="text" placeholder="Your name" maxlength="60" />
+        </label>
+        <label>
+          Avatar Initials (2 chars)
+          <input type="text" placeholder="JD" maxlength="2" style="text-transform:uppercase" />
+        </label>
+        <label>
+          Bio
+          <textarea placeholder="Tell us about yourself" maxlength="200" rows="3"></textarea>
+        </label>
+        <button type="submit" class="btn-submit">Save</button>
+      </form>
+    </div>
+  </dialog>
 
   <script src="script.js"></script>
 </body>
