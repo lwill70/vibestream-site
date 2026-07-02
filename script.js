@@ -146,8 +146,8 @@ function renderTrending() {
     return;
   }
 
-  els.trendingGrid.innerHTML = items.map(item => `
-    <div class="content-card">
+  els.trendingGrid.innerHTML = items.map((item, idx) => `
+    <div class="content-card" data-content-id="trending-${idx}">
       <div class="content-card-img">${item.icon}</div>
       <div class="content-card-info">
         <div class="content-card-label">${item.type}</div>
@@ -157,23 +157,38 @@ function renderTrending() {
           <span>👁️ ${item.views}K</span>
           <span>❤️ ${item.likes}K</span>
         </div>
+        <div class="content-card-actions">
+          <button class="btn-action btn-stream" data-id="trending-${idx}" title="Stream this content">▶ Stream</button>
+          <button class="btn-action btn-download" data-id="trending-${idx}" title="Download">⬇ Download</button>
+          <button class="btn-action btn-view" data-id="trending-${idx}" title="View details">👁 View</button>
+        </div>
       </div>
     </div>
   `).join('');
+  
+  bindMediaActions(items, 'trending');
 }
 
 // Render uploads
 function renderUploads() {
-  els.uploadsGrid.innerHTML = state.uploads.map(item => `
-    <div class="content-card">
+  els.uploadsGrid.innerHTML = state.uploads.map((item, idx) => `
+    <div class="content-card" data-content-id="upload-${idx}">
       <div class="content-card-img">${item.icon}</div>
       <div class="content-card-info">
         <div class="content-card-label">UPLOAD</div>
         <div class="content-card-title">${item.title}</div>
         <div class="content-card-artist">${item.artist}</div>
+        <div class="content-card-actions">
+          <button class="btn-action btn-stream" data-id="upload-${idx}" title="Stream this content">▶ Stream</button>
+          <button class="btn-action btn-publish" data-id="upload-${idx}" title="Publish">📤 Publish</button>
+          <button class="btn-action btn-download" data-id="upload-${idx}" title="Download">⬇ Download</button>
+          <button class="btn-action btn-view" data-id="upload-${idx}" title="View details">👁 View</button>
+        </div>
       </div>
     </div>
   `).join('');
+  
+  bindMediaActions(state.uploads, 'upload');
 }
 
 // Render browse categories
@@ -302,8 +317,8 @@ function bindEvents() {
     if (e.key === 'Enter') {
       const query = e.target.value.toLowerCase();
       const filtered = state.media.filter(m => m.title.toLowerCase().includes(query) || m.artist.toLowerCase().includes(query));
-      els.trendingGrid.innerHTML = filtered.length ? filtered.map(item => `
-        <div class="content-card">
+      els.trendingGrid.innerHTML = filtered.length ? filtered.map((item, idx) => `
+        <div class="content-card" data-content-id="search-${idx}">
           <div class="content-card-img">${item.icon}</div>
           <div class="content-card-info">
             <div class="content-card-label">${item.type}</div>
@@ -313,10 +328,40 @@ function bindEvents() {
               <span>👁️ ${item.views}K</span>
               <span>❤️ ${item.likes}K</span>
             </div>
+            <div class="content-card-actions">
+              <button class="btn-action btn-stream" data-id="search-${idx}" title="Stream this content">▶ Stream</button>
+              <button class="btn-action btn-download" data-id="search-${idx}" title="Download">⬇ Download</button>
+              <button class="btn-action btn-view" data-id="search-${idx}" title="View details">👁 View</button>
+            </div>
           </div>
         </div>
       `).join('') : '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No results found.</p>';
+      bindMediaActions(filtered, 'search');
     }
+  });
+}
+
+// Bind media action buttons
+function bindMediaActions(items, type) {
+  document.querySelectorAll('.btn-action').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const [prefix, index] = id.split('-');
+      const item = items[parseInt(index)];
+      
+      if (btn.classList.contains('btn-stream')) {
+        alert(`▶ Streaming: ${item.title}\nby ${item.artist}\n\n[Stream player would load here]`);
+      } else if (btn.classList.contains('btn-publish')) {
+        alert(`📤 Publishing: ${item.title}\n\nYour content is now live and visible to all users!`);
+        btn.textContent = '✓ Published';
+        btn.disabled = true;
+      } else if (btn.classList.contains('btn-download')) {
+        alert(`⬇ Downloading: ${item.title}\nby ${item.artist}\n\n[Download initiated]`);
+      } else if (btn.classList.contains('btn-view')) {
+        alert(`👁 View Details\n\nTitle: ${item.title}\nArtist: ${item.artist}\nType: ${item.type}\nViews: ${item.views || 0}K\nLikes: ${item.likes || 0}K`);
+      }
+    });
   });
 }
 

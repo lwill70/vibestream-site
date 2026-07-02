@@ -551,6 +551,56 @@ body {
   color: var(--muted);
 }
 
+.content-card-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-action {
+  padding: 6px 8px;
+  background: rgba(31, 113, 255, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.btn-action:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-action:active {
+  transform: translateY(0);
+}
+
+.btn-action.btn-publish {
+  border-color: var(--good);
+  color: var(--good);
+  background: rgba(47, 224, 176, 0.1);
+}
+
+.btn-action.btn-publish:hover {
+  background: var(--good);
+  color: white;
+}
+
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* BROWSE CATEGORIES */
 .browse-categories {
   display: grid;
