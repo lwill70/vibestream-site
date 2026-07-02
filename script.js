@@ -88,9 +88,16 @@ const els = {
   topCreators: document.getElementById('topCreators'),
   uploadDialog: document.getElementById('uploadDialog'),
   profileDialog: document.getElementById('profileDialog'),
+  playerDialog: document.getElementById('playerDialog'),
   uploadForm: document.getElementById('uploadForm'),
   profileForm: document.getElementById('profileForm'),
   profileBtn: document.getElementById('profileBtn'),
+  videoPlayer: document.getElementById('videoPlayer'),
+  audioPlayer: document.getElementById('audioPlayer'),
+  audioElement: document.getElementById('audioElement'),
+  fallbackPlayer: document.getElementById('fallbackPlayer'),
+  playPauseBtn: document.getElementById('playPauseBtn'),
+  stopBtn: document.getElementById('stopBtn'),
 };
 
 // Initialize
@@ -341,6 +348,106 @@ function bindEvents() {
   });
 }
 
+// Determine media type for playback
+function getMediaTypeForPlayback(contentType) {
+  const type = contentType.toLowerCase();
+  if (type.includes('music') || type.includes('remix') || type.includes('mixtape') || type.includes('album') || type.includes('single') || type.includes('ep')) {
+    return 'audio';
+  } else if (type.includes('video') || type.includes('movie') || type.includes('series') || type.includes('anime')) {
+    return 'video';
+  }
+  return 'fallback';
+}
+
+// Stream media content
+function streamMedia(item, contentUrl = null) {
+  const mediaType = getMediaTypeForPlayback(item.type);
+  
+  // Set up player dialog
+  els.playerDialog.showModal();
+  document.getElementById('playerTitle').textContent = `Now Playing: ${item.title}`;
+  document.getElementById('detailTitle').textContent = item.title;
+  document.getElementById('detailArtist').textContent = item.artist;
+  document.getElementById('detailType').textContent = item.type;
+  document.getElementById('detailStatus').textContent = 'Now Streaming';
+  
+  // Hide all players first
+  els.videoPlayer.style.display = 'none';
+  els.audioPlayer.style.display = 'none';
+  els.fallbackPlayer.style.display = 'none';
+  
+  if (mediaType === 'audio') {
+    // Audio playback
+    els.audioPlayer.style.display = 'block';
+    document.getElementById('playerArtist').textContent = item.artist;
+    document.getElementById('playerGenre').textContent = item.type;
+    
+    if (contentUrl) {
+      els.audioElement.src = contentUrl;
+      els.audioElement.play();
+    } else {
+      // Simulate audio playback
+      els.audioElement.src = 'data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==';
+      els.audioElement.play().catch(() => {
+        els.fallbackPlayer.style.display = 'block';
+        els.audioPlayer.style.display = 'none';
+        setupFallbackPlayer(item);
+      });
+    }
+  } else if (mediaType === 'video') {
+    // Video playback
+    els.videoPlayer.style.display = 'block';
+    
+    if (contentUrl) {
+      els.videoPlayer.src = contentUrl;
+      els.videoPlayer.play();
+    } else {
+      // Fallback for video
+      els.videoPlayer.style.display = 'none';
+      els.fallbackPlayer.style.display = 'block';
+      setupFallbackPlayer(item);
+    }
+  } else {
+    // Fallback player
+    els.fallbackPlayer.style.display = 'block';
+    setupFallbackPlayer(item);
+  }
+}
+
+// Setup fallback player with simulated playback
+function setupFallbackPlayer(item) {
+  document.getElementById('fallbackTitle').textContent = item.title;
+  document.getElementById('fallbackArtist').textContent = item.artist;
+  
+  let isPlaying = true;
+  
+  els.playPauseBtn.textContent = '⏸ Pause';
+  els.playPauseBtn.onclick = () => {
+    isPlaying = !isPlaying;
+    els.playPauseBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    document.getElementById('detailStatus').textContent = isPlaying ? 'Now Streaming' : 'Paused';
+  };
+  
+  els.stopBtn.onclick = () => {
+    els.playerDialog.close();
+    document.getElementById('detailStatus').textContent = 'Stopped';
+  };
+  
+  // Simulate playback with status updates
+  const statusElement = document.getElementById('detailStatus');
+  let simulatedTime = 0;
+  const interval = setInterval(() => {
+    if (isPlaying && !els.playerDialog.hasAttribute('open')) {
+      clearInterval(interval);
+    } else if (isPlaying) {
+      simulatedTime += 1;
+      const minutes = Math.floor(simulatedTime / 60);
+      const seconds = simulatedTime % 60;
+      statusElement.textContent = `Streaming ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+  }, 1000);
+}
+
 // Bind media action buttons
 function bindMediaActions(items, type) {
   document.querySelectorAll('.btn-action').forEach(btn => {
@@ -351,7 +458,7 @@ function bindMediaActions(items, type) {
       const item = items[parseInt(index)];
       
       if (btn.classList.contains('btn-stream')) {
-        alert(`▶ Streaming: ${item.title}\nby ${item.artist}\n\n[Stream player would load here]`);
+        streamMedia(item);
       } else if (btn.classList.contains('btn-publish')) {
         alert(`📤 Publishing: ${item.title}\n\nYour content is now live and visible to all users!`);
         btn.textContent = '✓ Published';
@@ -364,6 +471,13 @@ function bindMediaActions(items, type) {
     });
   });
 }
+
+// Close player dialog
+document.getElementById('closePlayer')?.addEventListener('click', () => {
+  els.playerDialog.close();
+  els.videoPlayer.pause();
+  els.audioElement.pause();
+});
 
 // Start
 document.addEventListener('DOMContentLoaded', init);

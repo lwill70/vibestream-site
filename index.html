@@ -382,6 +382,56 @@
     </div>
   </dialog>
 
+  <!-- MEDIA PLAYER -->
+  <dialog id="playerDialog" class="dialog">
+    <div class="dialog-box player-box">
+      <button class="dialog-close" id="closePlayer">✕</button>
+      <h3 id="playerTitle">Now Playing</h3>
+      
+      <div class="player-container">
+        <!-- Video Player -->
+        <video id="videoPlayer" class="media-player" controls style="display: none; width: 100%; background: black; border-radius: 8px;"></video>
+        
+        <!-- Audio Player -->
+        <div id="audioPlayer" class="audio-player" style="display: none;">
+          <div class="audio-visualizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          <div class="audio-info">
+            <div id="playerArtist" class="audio-artist">Loading...</div>
+            <div id="playerGenre" class="audio-genre">Audio</div>
+          </div>
+          <audio id="audioElement" style="width: 100%; margin-top: 16px;"></audio>
+        </div>
+
+        <!-- Fallback Player (for demo content) -->
+        <div id="fallbackPlayer" class="fallback-player">
+          <div class="player-icon">▶</div>
+          <div class="player-info">
+            <div id="fallbackTitle" class="fallback-title">Now Playing</div>
+            <div id="fallbackArtist" class="fallback-artist">Artist Name</div>
+          </div>
+          <div class="playback-controls">
+            <button id="playPauseBtn" class="control-btn">⏸ Pause</button>
+            <button id="stopBtn" class="control-btn">⏹ Stop</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Info -->
+      <div class="player-details" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+        <div><strong>Title:</strong> <span id="detailTitle">-</span></div>
+        <div><strong>Artist:</strong> <span id="detailArtist">-</span></div>
+        <div><strong>Type:</strong> <span id="detailType">-</span></div>
+        <div><strong>Status:</strong> <span id="detailStatus">Streaming</span></div>
+      </div>
+    </div>
+  </dialog>
+
   <script src="script.js"></script>
 </body>
 </html>
