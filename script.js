@@ -248,6 +248,7 @@ function bindEvents() {
     const title = els.uploadForm.querySelector('input[name="title"]').value;
     const artistName = els.uploadForm.querySelector('input[name="artistName"]').value;
     const category = els.uploadForm.querySelector('select[name="category"]').value;
+    const genre = els.uploadForm.querySelector('input[name="genre"]').value;
     const albumName = els.uploadForm.querySelector('input[name="albumName"]').value;
     const features = els.uploadForm.querySelector('input[name="features"]').value;
     const tracklist = els.uploadForm.querySelector('textarea[name="tracklist"]').value;
@@ -258,6 +259,7 @@ function bindEvents() {
       title,
       artist: artistName || state.profile.name,
       type: category.toUpperCase(),
+      genre: genre || null,
       icon: '🎵',
       albumName: albumName || null,
       features: features || null,
