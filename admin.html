@@ -11,23 +11,12 @@
   <div id="adminLoginDialog" class="admin-login-dialog" style="display: none;">
     <div class="admin-login-container">
       <div class="admin-login-header">
-        <div class="admin-login-logo">🎵</div>
-        <h2>VibeStream Admin Access</h2>
-        <p>Secure Area - Authentication Required</p>
+        <div class="admin-login-logo">🔐</div>
+        <h2>VibeStream Admin - RESTRICTED ACCESS</h2>
+        <p>Secure Area - Only lwill70.bl@gmail.com Can Access This Panel</p>
       </div>
       <form id="adminLoginForm" class="admin-login-form">
-        <div class="form-group">
-          <label for="adminPassword">Admin Password:</label>
-          <input 
-            type="password" 
-            id="adminPassword" 
-            name="adminPassword" 
-            placeholder="Enter admin password" 
-            required
-          >
-        </div>
-        <button type="submit" class="btn-admin-login">🔓 Unlock Admin Panel</button>
-        <p class="login-hint">Only authorized administrators can access this panel.</p>
+        <!-- Form fields injected by JavaScript -->
       </form>
       <div id="loginError" class="login-error" style="display: none;"></div>
       <button onclick="window.location.href='index.html'" class="btn-back-to-site">← Back to Site</button>
