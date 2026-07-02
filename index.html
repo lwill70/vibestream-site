@@ -13,208 +13,229 @@
   <div class="aurora" aria-hidden="true"></div>
 
   <div class="app-shell">
+    <!-- LEFT SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <div class="brand-mark">V</div>
-        <div>
-          <p class="brand-name">VIBESTREAM</p>
-          <p class="brand-sub">Creative Pulse Network</p>
+      <div class="sidebar-header">
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 3v18h14V3H5zm2 2h10v10H7V5zm10 12H7v-2h10v2z"/>
+          </svg>
+          <h1 class="brand-name">VIBESTREAM</h1>
         </div>
       </div>
 
-      <nav class="menu" aria-label="Primary">
-        <button class="menu-item active" data-section="all">Home</button>
-        <button class="menu-item" data-section="music">Music</button>
-        <button class="menu-item" data-section="videos">Videos</button>
-        <button class="menu-item" data-section="series">Series</button>
-        <button class="menu-item" data-section="graphics">Graphics</button>
-        <button class="menu-item" data-section="marketplace">Marketplace</button>
-        <button class="menu-item" data-section="upload">Upload</button>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <div class="nav-section">
+          <a href="#" class="nav-item active" data-section="all">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
+          </a>
+          <a href="#" class="nav-item" data-section="music">
+            <span class="nav-icon">🎵</span>
+            <span class="nav-label">Music</span>
+          </a>
+          <a href="#" class="nav-item" data-section="videos">
+            <span class="nav-icon">🎬</span>
+            <span class="nav-label">Videos</span>
+          </a>
+          <a href="#" class="nav-item" data-section="series">
+            <span class="nav-icon">📺</span>
+            <span class="nav-label">Series</span>
+          </a>
+          <a href="#" class="nav-item" data-section="graphics">
+            <span class="nav-icon">🎨</span>
+            <span class="nav-label">Graphics</span>
+          </a>
+          <a href="#" class="nav-item" data-section="marketplace">
+            <span class="nav-icon">🛍️</span>
+            <span class="nav-label">Marketplace</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <a href="#" class="nav-item" id="trendingNav" data-section="trending">
+            <span class="nav-icon">🔥</span>
+            <span class="nav-label">Trending</span>
+          </a>
+          <a href="#" class="nav-item" id="uploadNav" data-section="upload">
+            <span class="nav-icon">⬆️</span>
+            <span class="nav-label">Upload</span>
+          </a>
+          <a href="#" class="nav-item" id="advertiseNav" data-section="advertise">
+            <span class="nav-icon">📢</span>
+            <span class="nav-label">Advertise</span>
+          </a>
+        </div>
       </nav>
 
-      <div class="playlist-panel">
-        <p class="panel-title">Library</p>
-        <button class="menu-item subtle" data-section="favorites">My Favorites</button>
-        <button class="menu-item subtle" data-section="history">Watch Later</button>
-        <button class="menu-item subtle" data-section="recent">Recently Played</button>
+      <div class="sidebar-divider"></div>
+
+      <div class="playlist-section">
+        <p class="section-title">PLAYLIST</p>
+        <a href="#" class="playlist-item" data-section="favorites">
+          <span class="icon">❤️</span>
+          <span>My Favorites</span>
+        </a>
+        <a href="#" class="playlist-item" data-section="history">
+          <span class="icon">⏱️</span>
+          <span>Watch Later</span>
+        </a>
+        <a href="#" class="playlist-item" data-section="downloads">
+          <span class="icon">⬇️</span>
+          <span>My Downloads</span>
+        </a>
+        <a href="#" class="playlist-item" data-section="recent">
+          <span class="icon">🕐</span>
+          <span>Recent Played</span>
+        </a>
       </div>
 
-      <div class="community-card">
-        <p>Always Free Platform</p>
-        <span>No subscriptions, no paywalls. Upload and stream freely.</span>
-        <button type="button" id="communityShare">Invite Creator</button>
+      <div class="sidebar-divider"></div>
+
+      <div class="premium-banner">
+        <div class="premium-icon">👑</div>
+        <h3>Go Premium</h3>
+        <p>Stream and download without limits, plus exclusive perks.</p>
+        <button class="btn-premium">Upgrade Now</button>
       </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="main-content">
+      <!-- TOP BAR -->
       <header class="topbar">
-        <button class="mobile-menu" id="menuToggle" aria-label="Toggle menu">Menu</button>
-
-        <label class="search-wrap" for="searchInput">
-          <input id="searchInput" type="search" placeholder="Search tracks, videos, creators and graphics..." autocomplete="off" />
+        <label class="search-box">
+          <input type="search" id="searchInput" placeholder="Search for music, videos, movies, series, graphics and more..." />
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
         </label>
 
-        <div class="top-actions">
+        <div class="topbar-actions">
           <button class="btn-primary" id="createBtn">+ Create</button>
-          <button class="icon-btn" id="themeCycle" aria-label="Change accent">Accent</button>
-          <button class="avatar-btn" id="profileBtn" aria-label="Open profile">
-            <span>JD</span>
+          <button class="icon-btn" id="notificationBtn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <button class="icon-btn" id="messageBtn" aria-label="Messages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          <button class="icon-btn" id="cartBtn" aria-label="Shopping cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge">1</span>
+          </button>
+          <button class="profile-btn" id="profileBtn">
+            <span class="profile-initials" id="avatarInitials">JD</span>
+            <span class="profile-name">John Doe</span>
           </button>
         </div>
       </header>
 
-      <section class="hero-grid">
-        <article class="hero-banner reveal">
-          <p class="overline">Welcome to</p>
-          <h1>VibeStream Studio</h1>
-          <p>Stream, release, promote and grow your audience from one dashboard. 100% free access.</p>
-          <div class="hero-cta">
-            <button class="btn-primary" id="playFeatured">Start Streaming</button>
-            <button class="btn-outline" id="uploadOpen">Upload Content</button>
+      <!-- HERO SECTION - 3 COLUMN LAYOUT -->
+      <section class="hero-section">
+        <!-- LEFT: TEXT CONTENT -->
+        <div class="hero-left">
+          <p class="hero-label">WELCOME TO</p>
+          <h1 class="hero-title">VIBE<span>STREAM</span></h1>
+          <p class="hero-subtitle">Stream, Download, Upload, Sell & Advertise. Everything you love. One platform.</p>
+          <div class="hero-buttons">
+            <button class="btn-primary" id="startStreaming">▶ Start Streaming</button>
+            <button class="btn-secondary" id="uploadOpen">Upload Content</button>
           </div>
-        </article>
-
-        <article class="hero-ad reveal delay-1">
-          <h2>Community Spotlight</h2>
-          <p>Discover weekly creator highlights and open collaborations.</p>
-          <button class="btn-primary" id="joinSpotlight">Join Spotlight</button>
-        </article>
-      </section>
-
-      <section class="stats reveal delay-1" id="statsStrip"></section>
-
-      <section class="streaming-panel reveal delay-2" id="streamingPanel">
-        <div class="streaming-head">
-          <h2>Streaming Options</h2>
-          <p id="streamStatus">Status: Offline</p>
         </div>
-        <div class="streaming-grid">
-          <label>
-            Stream Quality
-            <select id="streamQuality">
-              <option value="360p">360p</option>
-              <option value="720p" selected>720p</option>
-              <option value="1080p">1080p</option>
-              <option value="4k">4K</option>
-            </select>
-          </label>
-          <label>
-            Stream Mode
-            <select id="streamMode">
-              <option value="public" selected>Public</option>
-              <option value="unlisted">Unlisted</option>
-              <option value="private">Private</option>
-            </select>
-          </label>
-          <label>
-            Source
-            <select id="streamSource">
-              <option value="camera" selected>Camera</option>
-              <option value="screen">Screen Share</option>
-              <option value="mixed">Camera + Screen</option>
-            </select>
-          </label>
+
+        <!-- MIDDLE: FEATURED IMAGE -->
+        <div class="hero-middle">
+          <div class="featured-image" id="featuredImage">
+            <div class="image-overlay"></div>
+            <p class="image-label">Featured Creator</p>
+          </div>
         </div>
-        <div class="streaming-actions">
-          <button class="btn-primary" id="goLiveBtn">Go Live</button>
-          <button class="btn-outline" id="scheduleBtn">Schedule Stream</button>
-          <button class="btn-outline" id="stopLiveBtn">Stop Stream</button>
+
+        <!-- RIGHT: ADVERTISE BOX -->
+        <div class="hero-right">
+          <div class="advertise-box">
+            <h2>ADVERTISE YOUR BUSINESS HERE</h2>
+            <p>Reach thousands of active audience daily</p>
+            <button class="btn-primary" id="advertiseNow">Advertise Now</button>
+          </div>
         </div>
       </section>
 
-      <section class="live-studio reveal delay-2" id="liveStudio">
-        <div class="live-main">
-          <article class="stream-screen" id="streamScreen">
-            <div class="screen-status" id="screenStatusBadge">OFFLINE</div>
-            <video id="liveVideoFeed" autoplay muted playsinline></video>
-            <h3 id="screenTitle">No stream selected</h3>
-            <p id="screenMeta">Select a stream from the feed.</p>
-          </article>
-
-          <section class="section-head compact">
-            <h2>Stream Filters</h2>
-            <div class="stream-filter-row" id="streamFilterRow"></div>
-          </section>
-
-          <section class="stream-feed" id="streamFeed"></section>
-        </div>
-
-        <aside class="comments-panel">
-          <header class="comments-head">
-            <h3>Live Comments</h3>
-            <p>React with Like, Fire, or Love</p>
-          </header>
-          <div class="comments-list" id="commentsList"></div>
-          <form id="commentForm" class="comment-form">
-            <input id="commentInput" name="comment" maxlength="240" placeholder="Write a comment..." required />
-            <button class="btn-primary" type="submit">Send</button>
-          </form>
-        </aside>
+      <!-- CATEGORY CARDS -->
+      <section class="category-section">
+        <div class="category-grid" id="statsStrip"></div>
       </section>
 
-      <div class="workspace-grid">
-        <section class="feed-column">
-          <section class="section-head">
+      <!-- MAIN CONTENT: TRENDING + UPLOADS + ADS + SIDEBAR -->
+      <div class="content-layout">
+        <!-- LEFT: FEED COLUMN -->
+        <div class="feed-column">
+          <!-- TRENDING NOW -->
+          <div class="section-head">
             <h2>Trending Now</h2>
-            <div class="head-controls">
-              <div id="filterChips" class="chips"></div>
-              <button class="btn-link" id="clearFilters">Clear</button>
-            </div>
-          </section>
-          <section id="trendingGrid" class="card-grid"></section>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div id="trendingGrid" class="trending-grid"></div>
 
-          <section class="section-head compact">
+          <!-- LATEST UPLOADS -->
+          <div class="section-head" style="margin-top: 40px;">
             <h2>Latest Uploads</h2>
-            <button class="btn-link" id="toggleUploads">Show More</button>
-          </section>
-          <section id="latestStrip" class="upload-strip"></section>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <div id="latestStrip" class="uploads-strip"></div>
 
-          <section class="section-head compact">
-            <h2>Featured Promotions</h2>
-          </section>
-          <section class="promo-grid" id="promoGrid"></section>
-        </section>
+          <!-- FEATURED ADS -->
+          <div class="section-head" style="margin-top: 40px;">
+            <h2>Featured Advertisements</h2>
+          </div>
+          <div id="adGrid" class="ads-grid"></div>
+        </div>
 
-        <aside class="side-column">
-          <section class="widget reveal delay-2">
-            <header>
+        <!-- RIGHT: SIDEBAR COLUMN -->
+        <aside class="sidebar-right">
+          <!-- TOP CREATORS -->
+          <div class="widget">
+            <div class="widget-head">
               <h3>Top Creators</h3>
-            </header>
-            <div id="creatorsList" class="list"></div>
-          </section>
+              <a href="#" class="view-all">View All</a>
+            </div>
+            <div id="creatorsList" class="creators-grid"></div>
+          </div>
 
-          <section class="widget reveal delay-3">
-            <header>
+          <!-- TOP PLAYLISTS -->
+          <div class="widget" style="margin-top: 30px;">
+            <div class="widget-head">
               <h3>Top Playlist</h3>
-            </header>
-            <ol id="playlistList" class="rank-list"></ol>
-          </section>
-
-          <section class="widget reveal delay-4">
-            <header>
-              <h3>Watch Queue</h3>
-              <button class="btn-link" id="clearQueue">Clear Queue</button>
-            </header>
-            <ul id="queueList" class="queue"></ul>
-          </section>
+              <a href="#" class="view-all">View All</a>
+            </div>
+            <ol id="playlistList" class="playlist-ranked"></ol>
+          </div>
         </aside>
       </div>
     </main>
   </div>
 
-  <section class="now-playing" id="nowPlayingBar" aria-live="polite">
-    <div class="now-playing-info">
-      <p id="nowPlayingText">Now playing: Nothing selected yet</p>
-    </div>
+  <!-- NOW PLAYING BAR -->
+  <div class="now-playing" id="nowPlayingBar">
+    <p id="nowPlayingText">Nothing playing</p>
     <audio id="audioPlayer" controls></audio>
-    <div class="now-playing-actions">
-      <button class="btn-outline" id="queueRandom">Queue Random</button>
-    </div>
-  </section>
+    <button class="btn-outline" id="queueRandom">Queue Random</button>
+  </div>
 
+  <!-- UPLOAD DIALOG -->
   <dialog id="uploadDialog">
     <form id="uploadForm" method="dialog">
-      <header class="upload-header">
+      <header class="dialog-header">
         <h3>Upload New Content</h3>
         <p>Fill details below, then publish to add content to your dashboard.</p>
       </header>
@@ -230,13 +251,16 @@
             Category
             <select name="category" required>
               <option value="music">Music</option>
+              <option value="album">Album</option>
+              <option value="single">Single</option>
+              <option value="ep">EP</option>
+              <option value="mixtape">Mixtape</option>
               <option value="music video">Music Video</option>
               <option value="videos">Video</option>
               <option value="movie">Movie</option>
-              <option value="mixtape">Mixtape</option>
               <option value="series">Series</option>
-              <option value="graphics">Graphics</option>
               <option value="podcast">Podcast</option>
+              <option value="graphics">Graphics</option>
               <option value="other">Other</option>
             </select>
           </label>
@@ -255,23 +279,15 @@
             </select>
           </label>
           <label>
-            Custom Category (optional)
-            <input name="customCategory" maxlength="30" placeholder="e.g. documentary, live set" />
-          </label>
-          <label>
             Creator Name
             <input name="creator" required placeholder="Your stage name" />
           </label>
         </div>
 
         <div class="upload-section">
-          <h4>Bulk Upload Tools</h4>
+          <h4>Upload Files</h4>
           <label>
-            Multiple Upload Titles (optional)
-            <textarea name="bulkTitles" rows="5" placeholder="Paste one title per line to upload many items at once"></textarea>
-          </label>
-          <label>
-            Upload Audio/Video Files (optional)
+            Audio/Video Files (optional)
             <input type="file" name="mediaFiles" id="mediaFiles" accept="audio/*,video/*" multiple />
           </label>
           <p class="field-note">Pick files in multiple rounds. New selections are added to the queue.</p>
@@ -286,24 +302,20 @@
         <ul id="pendingFilesList"></ul>
       </div>
 
-      <menu class="upload-actions">
-        <div class="menu-left">
-          <button class="btn-outline" type="button" id="uploadBack">Back</button>
-        </div>
-        <div class="menu-right">
-          <button value="cancel" class="btn-outline" type="button" id="uploadCancel">Cancel</button>
-          <button class="btn-primary" type="submit">Publish</button>
-        </div>
+      <menu class="dialog-actions">
+        <button class="btn-secondary" type="button" id="uploadCancel">Cancel</button>
+        <button class="btn-primary" type="submit">Publish</button>
       </menu>
     </form>
   </dialog>
 
+  <!-- PROFILE DIALOG -->
   <dialog id="profileDialog">
     <form id="profileForm">
-      <div class="upload-header">
+      <header class="dialog-header">
         <h3>My Profile</h3>
         <p>Edit your creator details. Saved locally on this device.</p>
-      </div>
+      </header>
       <div class="profile-grid">
         <label>
           Display Name
@@ -318,22 +330,20 @@
           <textarea name="bio" maxlength="200" rows="3" placeholder="Tell the world about yourself..."></textarea>
         </label>
       </div>
-      <menu class="upload-actions">
-        <div class="menu-left"></div>
-        <div class="menu-right">
-          <button class="btn-outline" type="button" id="profileClose">Close</button>
-          <button class="btn-primary" type="submit">Save Profile</button>
-        </div>
+      <menu class="dialog-actions">
+        <button class="btn-secondary" type="button" id="profileClose">Close</button>
+        <button class="btn-primary" type="submit">Save Profile</button>
       </menu>
     </form>
   </dialog>
 
+  <!-- SPOTLIGHT DIALOG -->
   <dialog id="spotlightDialog">
     <form id="spotlightForm">
-      <div class="upload-header">
+      <header class="dialog-header">
         <h3>Join Creator Spotlight</h3>
         <p>Submit your info to be featured in the weekly community spotlight. Completely free.</p>
-      </div>
+      </header>
       <div class="profile-grid">
         <label>
           Creator / Stage Name
@@ -359,13 +369,9 @@
           <textarea name="spotBio" maxlength="400" rows="4" placeholder="Describe your work and why you deserve the spotlight..."></textarea>
         </label>
       </div>
-      <menu class="upload-actions">
-        <div class="menu-left">
-          <button class="btn-outline" type="button" id="spotlightClose">Cancel</button>
-        </div>
-        <div class="menu-right">
-          <button class="btn-primary" type="submit">Submit Application</button>
-        </div>
+      <menu class="dialog-actions">
+        <button class="btn-secondary" type="button" id="spotlightClose">Cancel</button>
+        <button class="btn-primary" type="submit">Submit Application</button>
       </menu>
     </form>
   </dialog>

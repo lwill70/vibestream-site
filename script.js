@@ -19,17 +19,19 @@ const RECENT_WINDOW = 200;
 
 const VALID_CATEGORIES = new Set([
 	"music",
+	"album",
+	"single",
+	"ep",
+	"mixtape",
 	"video",
 	"videos",
+	"music video",
+	"movie",
+	"series",
 	"podcast",
 	"documentary",
 	"live set",
-	"series",
 	"graphics",
-	"movie",
-	"mixtape",
-	"music videos",
-	"music video",
 	"product",
 	"other",
 ]);
@@ -51,24 +53,9 @@ const VALID_STREAM_MODE = new Set(["public", "unlisted", "private"]);
 const VALID_STREAM_SOURCE = new Set(["camera", "screen", "mixed"]);
 const VALID_REACTIONS = ["like", "fire", "love"];
 
-const DEFAULT_MEDIA = [
-	{ id: "m1", title: "Neon Skyline", creator: "DJ Maphorisa", category: "music", views: "24.5K", palette: "linear-gradient(140deg, #2e7bff, #8f3cff)" },
-	{ id: "m2", title: "Street Vibes 3", creator: "DJ Flexy", category: "mixtape", views: "18.7K", palette: "linear-gradient(140deg, #1469ff, #10307f)" },
-	{ id: "m3", title: "Blood Covenant", creator: "Vibe Pictures", category: "movie", views: "35.6K", palette: "linear-gradient(140deg, #7d2a20, #25152f)" },
-	{ id: "m4", title: "Last City", creator: "Core Frame", category: "series", views: "29.1K", palette: "linear-gradient(140deg, #1f3d6d, #0c141f)" },
-	{ id: "m5", title: "Forever", creator: "Rex V", category: "music video", views: "22.8K", palette: "linear-gradient(140deg, #641d28, #1e182f)" },
-	{ id: "m6", title: "Free Cover Pack", creator: "Design Hive", category: "graphics", views: "8.3K", palette: "linear-gradient(140deg, #8f6b2f, #1a1e38)" },
-	{ id: "m7", title: "Vibe Hoodie", creator: "Street Wear", category: "product", views: "13.4K", palette: "linear-gradient(140deg, #2f3a54, #121826)" },
-	{ id: "m8", title: "Pulse Mix 2026", creator: "VisionGFX", category: "music", views: "17.9K", palette: "linear-gradient(140deg, #0e66a8, #2a1655)" },
-];
+const DEFAULT_MEDIA = [];
 
-const DEFAULT_UPLOADS = [
-	{ title: "Summer Fever", creator: "Jay Melody", createdAt: Date.now() - 2 * 60 * 60 * 1000 },
-	{ title: "The Equalizer 3", creator: "Action Vault", createdAt: Date.now() - 4 * 60 * 60 * 1000 },
-	{ title: "Logo Design Pack", creator: "VisionGFX", createdAt: Date.now() - 6 * 60 * 60 * 1000 },
-	{ title: "No Love", creator: "Official V", createdAt: Date.now() - 9 * 60 * 60 * 1000 },
-	{ title: "V-Lone Tee", creator: "Street Wear", createdAt: Date.now() - 8 * 60 * 60 * 1000 },
-];
+const DEFAULT_UPLOADS = [];
 
 const promotions = [
 	{ title: "Open Creator Challenges", desc: "Weekly free challenges to feature your work." },
@@ -87,14 +74,16 @@ const creators = [
 const playlist = ["Hot Hits This Week", "Afrobeats Bangers", "Rap Highlights", "Chill Vibes", "Movie Themes"];
 
 const stats = [
-	["Albums", "12,456"],
-	["Mixtapes", "8,742"],
-	["EPs", "6,312"],
-	["Movies", "15,489"],
-	["Series", "9,805"],
-	["Music Videos", "7,248"],
-	["Graphics", "5,631"],
-	["Marketplace", "12,984"],
+	["Albums", "0"],
+	["Mixtapes", "0"],
+	["EPs", "0"],
+	["Singles", "0"],
+	["Movies", "0"],
+	["Series", "0"],
+	["Music Videos", "0"],
+	["Graphics", "0"],
+	["Podcasts", "0"],
+	["Marketplace", "0"],
 ];
 
 // Session-only blob URLs (not persisted – object URLs last until page reload)
@@ -125,64 +114,41 @@ const state = {
 };
 
 const els = {
-	menuToggle: document.getElementById("menuToggle"),
 	sidebar: document.getElementById("sidebar"),
 	searchInput: document.getElementById("searchInput"),
-	menuItems: Array.from(document.querySelectorAll(".menu-item[data-section]")),
-	chips: document.getElementById("filterChips"),
+	navItems: Array.from(document.querySelectorAll(".nav-item[data-section]")),
+	playlistItems: Array.from(document.querySelectorAll(".playlist-item[data-section]")),
 	statsStrip: document.getElementById("statsStrip"),
 	trendingGrid: document.getElementById("trendingGrid"),
 	latestStrip: document.getElementById("latestStrip"),
-	promoGrid: document.getElementById("promoGrid"),
+	adGrid: document.getElementById("adGrid"),
 	creatorsList: document.getElementById("creatorsList"),
 	playlistList: document.getElementById("playlistList"),
-	queueList: document.getElementById("queueList"),
 	nowPlayingText: document.getElementById("nowPlayingText"),
 	queueRandom: document.getElementById("queueRandom"),
-	clearFilters: document.getElementById("clearFilters"),
 	uploadDialog: document.getElementById("uploadDialog"),
 	uploadOpen: document.getElementById("uploadOpen"),
 	createBtn: document.getElementById("createBtn"),
 	uploadForm: document.getElementById("uploadForm"),
 	toast: document.getElementById("toast"),
-	playFeatured: document.getElementById("playFeatured"),
-	themeCycle: document.getElementById("themeCycle"),
-	clearQueue: document.getElementById("clearQueue"),
-	communityShare: document.getElementById("communityShare"),
+	startStreaming: document.getElementById("startStreaming"),
+	advertiseNow: document.getElementById("advertiseNow"),
 	profileBtn: document.getElementById("profileBtn"),
-	joinSpotlight: document.getElementById("joinSpotlight"),
-	uploadBack: document.getElementById("uploadBack"),
+	avatarInitials: document.getElementById("avatarInitials"),
 	uploadCancel: document.getElementById("uploadCancel"),
-	streamStatus: document.getElementById("streamStatus"),
-	streamQuality: document.getElementById("streamQuality"),
-	streamMode: document.getElementById("streamMode"),
-	streamSource: document.getElementById("streamSource"),
-	goLiveBtn: document.getElementById("goLiveBtn"),
-	scheduleBtn: document.getElementById("scheduleBtn"),
-	stopLiveBtn: document.getElementById("stopLiveBtn"),
-	toggleUploads: document.getElementById("toggleUploads"),
-	uploadCustomCategory: document.querySelector("#uploadForm input[name='customCategory']"),
-	uploadBulkTitles: document.querySelector("#uploadForm textarea[name='bulkTitles']"),
 	uploadMediaFiles: document.getElementById("mediaFiles"),
 	pendingFilesWrap: document.getElementById("pendingFilesWrap"),
 	pendingFilesList: document.getElementById("pendingFilesList"),
 	clearPendingFiles: document.getElementById("clearPendingFiles"),
-	streamFilterRow: document.getElementById("streamFilterRow"),
-	streamFeed: document.getElementById("streamFeed"),
-	screenStatusBadge: document.getElementById("screenStatusBadge"),
-	screenTitle: document.getElementById("screenTitle"),
-	screenMeta: document.getElementById("screenMeta"),
 	liveVideoFeed: document.getElementById("liveVideoFeed"),
 	audioPlayer: document.getElementById("audioPlayer"),
-	commentsList: document.getElementById("commentsList"),
-	commentForm: document.getElementById("commentForm"),
-	commentInput: document.getElementById("commentInput"),
 	profileDialog: document.getElementById("profileDialog"),
 	profileForm: document.getElementById("profileForm"),
 	profileClose: document.getElementById("profileClose"),
 	spotlightDialog: document.getElementById("spotlightDialog"),
 	spotlightForm: document.getElementById("spotlightForm"),
 	spotlightClose: document.getElementById("spotlightClose"),
+	categoryCards: Array.from(document.querySelectorAll(".category-card[data-section]")),
 };
 
 let toastTimer;
@@ -778,12 +744,12 @@ function renderProfile() {
 	const profile = loadJson(STORAGE_KEYS.profile, { displayName: "John Doe", initials: "JD", bio: "" });
 	const initials = cleanText(profile.initials || "JD", 2).toUpperCase() || "JD";
 	const displayName = cleanText(profile.displayName || "John Doe", 60) || "John Doe";
-	if (els.profileBtn) {
-		const span = els.profileBtn.querySelector("span");
-		if (span) {
-			span.textContent = initials;
-		}
-		els.profileBtn.setAttribute("aria-label", `Open profile: ${displayName}`);
+	if (els.avatarInitials) {
+		els.avatarInitials.textContent = initials;
+	}
+	const profileNameEl = document.querySelector(".profile-name");
+	if (profileNameEl) {
+		profileNameEl.textContent = displayName;
 	}
 }
 
@@ -794,13 +760,27 @@ function renderStats() {
 	els.statsStrip.innerHTML = stats
 		.map(
 			([label, value]) => `
-				<article class="stat-card">
-					<p>${escapeHtml(label)}</p>
-					<strong>${escapeHtml(value)}</strong>
+				<article class="category-card" data-section="${escapeHtml(label.toLowerCase())}">
+					<span class="cat-icon">📊</span>
+					<h3>${escapeHtml(label)}</h3>
+					<p class="cat-count">${escapeHtml(value)}</p>
 				</article>
 			`
 		)
 		.join("");
+
+	// Re-bind category card click handlers after rendering
+	const categoryCards = Array.from(els.statsStrip.querySelectorAll(".category-card"));
+	categoryCards.forEach((card) => {
+		card.addEventListener("click", () => {
+			const section = cleanText(card.dataset.section || "all", 20);
+			state.selectedCategory = section;
+			els.navItems.forEach((el) => {
+				el.classList.toggle("active", el.dataset.section === section);
+			});
+			renderMedia();
+		});
+	});
 }
 
 function renderChips() {
@@ -830,7 +810,7 @@ function renderMedia() {
 	}
 	const filtered = getFilteredMedia();
 	if (!filtered.length) {
-		els.trendingGrid.innerHTML = "<p class='meta'>No content matches your filters.</p>";
+		els.trendingGrid.innerHTML = "<p style='color:var(--muted)'>No content matches your filters.</p>";
 		return;
 	}
 
@@ -838,13 +818,14 @@ function renderMedia() {
 		.map(
 			(item) => `
 				<article class="media-card">
-					<div class="media-art" style="background:${escapeHtml(item.palette)}">
-						<span class="tag">${escapeHtml(item.category)}</span>
+					<div class="media-thumb" style="background:${escapeHtml(item.palette)}">
+						<span style="color:white;font-size:2rem">${item.category.charAt(0).toUpperCase()}</span>
 					</div>
 					<div class="media-info">
 						<p class="media-title">${escapeHtml(item.title)}</p>
-						<p class="meta">${escapeHtml(item.creator)} - ${escapeHtml(item.genre || "other")} - ${escapeHtml(item.views)} views</p>
-						<div class="card-actions">
+						<p class="media-creator">${escapeHtml(item.creator)} - ${escapeHtml(item.genre || "other")}</p>
+						<p class="media-views">${escapeHtml(item.views)} views</p>
+						<div class="media-actions">
 							<button data-action="play" data-id="${escapeHtml(item.id)}">Play</button>
 							<button data-action="queue" data-id="${escapeHtml(item.id)}">Queue</button>
 						</div>
@@ -862,7 +843,7 @@ function renderMedia() {
 			}
 
 			if (btn.dataset.action === "play" && els.nowPlayingText) {
-				els.nowPlayingText.textContent = `Now playing: ${item.title} by ${item.creator}`;
+				els.nowPlayingText.textContent = `${item.title} by ${item.creator}`;
 
 				// Play actual file if one was uploaded for this item
 				const blobInfo = mediaBlobUrls[item.id];
@@ -892,7 +873,6 @@ function renderMedia() {
 				state.queue.unshift({ id: makeId(), title: item.title, creator: item.creator });
 				state.queue = state.queue.slice(0, MAX_QUEUE_ITEMS);
 				saveState();
-				renderQueue();
 				showToast(`${item.title} added to queue`);
 			}
 		});
@@ -903,56 +883,44 @@ function renderUploads() {
 	if (!els.latestStrip) {
 		return;
 	}
-	const hasMore = state.latestUploads.length > state.uploadDisplayLimit;
-	const uploadsToRender = hasMore ? state.latestUploads.slice(0, state.uploadDisplayLimit) : state.latestUploads;
-
-	els.latestStrip.innerHTML = uploadsToRender
+	els.latestStrip.innerHTML = state.latestUploads.slice(0, 10)
 		.map(
 			(item) => `
 				<article class="upload-item">
-					<p>${escapeHtml(item.title)}</p>
-					<p class="creator">${escapeHtml(item.creator)} • ${escapeHtml(item.genre || "other")}</p>
-					<p class="time">${escapeHtml(formatRelativeTime(item.createdAt))}</p>
+					<p class="upload-item-title">${escapeHtml(item.title)}</p>
+					<p class="upload-item-meta">${escapeHtml(item.creator)}</p>
+					<p class="upload-item-meta">${escapeHtml(formatRelativeTime(item.createdAt))}</p>
 				</article>
 			`
 		)
 		.join("");
-
-	if (els.toggleUploads) {
-		if (state.latestUploads.length <= 30) {
-			els.toggleUploads.style.visibility = "hidden";
-		} else {
-			els.toggleUploads.style.visibility = "visible";
-			els.toggleUploads.textContent = hasMore
-				? `Show More (${Math.max(state.latestUploads.length - state.uploadDisplayLimit, 0)} left)`
-				: "Show Less";
-		}
-	}
 }
 
-function renderPromotions() {
-	if (!els.promoGrid) {
+function renderAdvertisements() {
+	if (!els.adGrid) {
 		return;
 	}
-	els.promoGrid.innerHTML = promotions
+	const ads = [
+		{ label: "SALE", title: "UP TO 50% OFF", desc: "On all streetwear", buttonText: "Shop Now" },
+		{ label: "NEW", title: "PROMOTE YOUR MUSIC VIDEO", desc: "Get more views and fans", buttonText: "Advertise Now" },
+		{ label: "BOOST", title: "BOOST YOUR BUSINESS TODAY", desc: "Advertise with us and grow your brand fast", buttonText: "Get Started" },
+	];
+	els.adGrid.innerHTML = ads
 		.map(
-			(item, index) => `
-				<article class="promo-card">
-					<h4>${escapeHtml(item.title)}</h4>
-					<p>${escapeHtml(item.desc)}</p>
-					<button class="btn-outline" data-promo-index="${index}">Learn More</button>
+			(ad, index) => `
+				<article class="ad-card">
+					<p class="ad-label">${escapeHtml(ad.label)}</p>
+					<h3>${escapeHtml(ad.title)}</h3>
+					<p>${escapeHtml(ad.desc)}</p>
+					<button class="btn-primary" data-ad-index="${index}">${escapeHtml(ad.buttonText)}</button>
 				</article>
 			`
 		)
 		.join("");
 
-	Array.from(els.promoGrid.querySelectorAll("button[data-promo-index]")).forEach((button) => {
+	Array.from(els.adGrid.querySelectorAll("button[data-ad-index]")).forEach((button) => {
 		button.addEventListener("click", () => {
-			const index = Number(button.dataset.promoIndex || 0);
-			const promo = promotions[index];
-			if (promo) {
-				showToast(`${promo.title} opened`);
-			}
+			showToast("Advertisement interaction tracked!");
 		});
 	});
 }
@@ -971,14 +939,14 @@ function renderCreators() {
 				.toUpperCase();
 			const following = Boolean(state.follows[creator.name]);
 			return `
-				<article class="creator-item">
-					<span class="creator-avatar">${escapeHtml(initials)}</span>
-					<div>
+				<div class="creator-item">
+					<div class="creator-avatar">${escapeHtml(initials)}</div>
+					<div class="creator-info">
 						<strong>${escapeHtml(creator.name)}</strong>
-						<p class="meta">${escapeHtml(creator.role)}</p>
+						<p>${escapeHtml(creator.role)}</p>
 					</div>
-					<button data-creator="${escapeHtml(creator.name)}">${following ? "Following" : "Follow"}</button>
-				</article>
+					<button class="creator-follow" data-creator="${escapeHtml(creator.name)}">${following ? "Following" : "Follow"}</button>
+				</div>
 			`;
 		})
 		.join("");
@@ -1002,8 +970,15 @@ function renderPlaylist() {
 		return;
 	}
 	els.playlistList.innerHTML = playlist
-		.map((item) => `<li>${escapeHtml(item)} <span class="meta">50 songs</span></li>`)
-		.join("");
+		.map((item, idx) => `
+		<li>
+			<span class="rank">${idx + 1}</span>
+			<div class="info">
+				<span class="name">${escapeHtml(item)}</span>
+				<span class="count">50 songs</span>
+			</div>
+		</li>
+	`).join("");
 }
 
 function renderQueue() {
@@ -1077,27 +1052,36 @@ function bindEvents() {
 		renderMedia();
 	});
 
-	els.menuItems.forEach((menuItem) => {
-		addSafeListener(menuItem, "click", () => {
-			els.menuItems.forEach((el) => el.classList.remove("active"));
-			menuItem.classList.add("active");
-			state.selectedCategory = cleanText(menuItem.dataset.section || "all", 20);
+	// Handle nav items (sidebar navigation)
+	els.navItems.forEach((navItem) => {
+		addSafeListener(navItem, "click", (e) => {
+			e.preventDefault();
+			els.navItems.forEach((el) => el.classList.remove("active"));
+			navItem.classList.add("active");
+			state.selectedCategory = cleanText(navItem.dataset.section || "all", 20);
 			renderMedia();
 		});
 	});
 
-	addSafeListener(els.clearFilters, "click", () => {
-		state.query = "";
-		state.selectedCategory = "all";
-		state.selectedChip = "all";
-		if (els.searchInput) {
-			els.searchInput.value = "";
-		}
-		els.menuItems.forEach((el) => {
-			el.classList.toggle("active", el.dataset.section === "all");
+	// Handle playlist items
+	els.playlistItems.forEach((playlistItem) => {
+		addSafeListener(playlistItem, "click", (e) => {
+			e.preventDefault();
+			state.selectedCategory = cleanText(playlistItem.dataset.section || "all", 20);
+			renderMedia();
 		});
-		renderChips();
-		renderMedia();
+	});
+
+	// Handle category cards
+	els.categoryCards.forEach((card) => {
+		addSafeListener(card, "click", () => {
+			const section = cleanText(card.dataset.section || "all", 20);
+			state.selectedCategory = section;
+			els.navItems.forEach((el) => {
+				el.classList.toggle("active", el.dataset.section === section);
+			});
+			renderMedia();
+		});
 	});
 
 	const openUpload = () => {
@@ -1543,17 +1527,12 @@ function init() {
 	loadState();
 	renderProfile();
 	renderStats();
-	renderChips();
 	renderMedia();
 	renderUploads();
-	renderPromotions();
+	renderAdvertisements();
 	renderCreators();
 	renderPlaylist();
-	renderQueue();
 	applyStreamState();
-	renderStreamFilters();
-	renderStreamFeed();
-	renderComments();
 	renderPendingFiles();
 	bindEvents();
 }
