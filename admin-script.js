@@ -1,7 +1,7 @@
 // VIBESTREAM ADMIN DASHBOARD
 
-// Admin security - default password (change this to your preferred password)
-const ADMIN_PASSWORD = 'admin123'; // Change this to a strong password!
+// Admin security - stores admin credentials
+const ADMIN_DATA_KEY = 'vibestream_admin_account';
 
 // Data keys
 const DATA_KEYS = {
@@ -27,9 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
   checkAdminAuth();
 });
 
+// Get admin account from localStorage
+function getAdminAccount() {
+  const stored = localStorage.getItem(ADMIN_DATA_KEY);
+  return stored ? JSON.parse(stored) : null;
+}
+
+// Save admin account to localStorage
+function saveAdminAccount(account) {
+  localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify(account));
+}
+
 // Check if user is authenticated as admin
 function checkAdminAuth() {
   const adminToken = localStorage.getItem('admin_authenticated');
+  const adminAccount = getAdminAccount();
   const loginDialog = document.getElementById('adminLoginDialog');
   const adminContainer = document.querySelector('.admin-container');
   
@@ -39,11 +51,84 @@ function checkAdminAuth() {
     adminContainer.style.display = 'grid';
     initAdmin();
   } else {
-    // Not authenticated - show login
+    // Not authenticated - show login or register
     loginDialog.style.display = 'flex';
     adminContainer.style.display = 'none';
-    setupLoginForm();
+    
+    if (!adminAccount) {
+      // No admin account created yet - show registration
+      setupRegistrationForm();
+    } else {
+      // Admin account exists - show login
+      setupLoginForm();
+    }
   }
+}
+
+// Setup admin registration form
+function setupRegistrationForm() {
+  const form = document.getElementById('adminLoginForm');
+  const passwordInput = document.getElementById('adminPassword');
+  const loginError = document.getElementById('loginError');
+  const loginHeader = document.querySelector('.admin-login-header');
+  const loginBtn = form.querySelector('.btn-admin-login');
+  
+  // Update header to show registration
+  if (loginHeader.querySelector('p')) {
+    loginHeader.querySelector('p').textContent = 'First Time Setup - Create Your Admin Account';
+  }
+  
+  // Add username field
+  const usernameField = document.createElement('div');
+  usernameField.className = 'form-group';
+  usernameField.innerHTML = '<label for="adminUsername">Admin Username:</label><input type="text" id="adminUsername" name="adminUsername" placeholder="Enter your admin username" required>';
+  form.insertBefore(usernameField, passwordInput.parentElement);
+  
+  // Add confirm password field
+  const confirmField = document.createElement('div');
+  confirmField.className = 'form-group';
+  confirmField.innerHTML = '<label for="confirmPassword">Confirm Password:</label><input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>';
+  passwordInput.parentElement.parentElement.insertBefore(confirmField, passwordInput.parentElement.nextSibling);
+  
+  // Update button text
+  loginBtn.textContent = '🚀 Create Admin Account';
+  loginBtn.style.marginTop = '8px';
+  
+  // Handle registration
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = document.getElementById('adminUsername').value.trim();
+    const password = passwordInput.value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (!username || username.length < 3) {
+      showLoginError('Username must be at least 3 characters long.');
+      return;
+    }
+    
+    if (password.length < 6) {
+      showLoginError('Password must be at least 6 characters long.');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      showLoginError('Passwords do not match.');
+      return;
+    }
+    
+    // Create admin account
+    const adminAccount = {
+      username: username,
+      password: password,
+      createdAt: new Date().toISOString()
+    };
+    
+    saveAdminAccount(adminAccount);
+    localStorage.setItem('admin_authenticated', 'true');
+    document.getElementById('adminLoginDialog').style.display = 'none';
+    document.querySelector('.admin-container').style.display = 'grid';
+    initAdmin();
+  });
 }
 
 // Setup admin login form
@@ -51,12 +136,17 @@ function setupLoginForm() {
   const form = document.getElementById('adminLoginForm');
   const passwordInput = document.getElementById('adminPassword');
   const loginError = document.getElementById('loginError');
+  const adminAccount = getAdminAccount();
+  const loginBtn = form.querySelector('.btn-admin-login');
+  
+  // Update button text
+  loginBtn.textContent = '🔓 Unlock Admin Panel';
   
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const enteredPassword = passwordInput.value;
     
-    if (enteredPassword === ADMIN_PASSWORD) {
+    if (enteredPassword === adminAccount.password) {
       // Authentication successful
       localStorage.setItem('admin_authenticated', 'true');
       loginError.style.display = 'none';
@@ -66,12 +156,18 @@ function setupLoginForm() {
       initAdmin();
     } else {
       // Authentication failed
-      loginError.style.display = 'block';
-      loginError.textContent = '❌ Invalid password. Access denied.';
+      showLoginError('❌ Invalid password. Access denied.');
       passwordInput.value = '';
       passwordInput.focus();
     }
   });
+}
+
+// Show login error
+function showLoginError(message) {
+  const loginError = document.getElementById('loginError');
+  loginError.style.display = 'block';
+  loginError.textContent = message;
 }
 
 // Initialize admin dashboard
