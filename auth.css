@@ -1,0 +1,53 @@
+/* Auth panel styling */
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.auth-form input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: rgba(10, 20, 48, 0.9);
+  color: var(--text);
+}
+
+.auth-form input:focus {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.auth-form .auth-action-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.auth-form .link-button {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  text-align: left;
+}
+
+.auth-form .link-button:hover {
+  text-decoration: underline;
+}
+
+.auth-message {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}

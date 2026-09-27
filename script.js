@@ -1,52 +1,73 @@
 ﻿// VIBESTREAM - APPLICATION LOGIC
 
 const DATA_KEYS = {
-  MEDIA: 'vibestream_media',
-  UPLOADS: 'vibestream_uploads',
-  PROFILE: 'vibestream_profile',
-  FAVORITES: 'vibestream_favorites',
-  DOWNLOADS: 'vibestream_downloads',
-  USERS: 'vibestream_users',
-  CURRENT_USER: 'vibestream_current_user',
-  ADVERTISEMENTS: 'vibestream_ads',
-  PODCASTS: 'vibestream_podcasts',
+    MEDIA: 'vibestream_media',
+    UPLOADS: 'vibestream_uploads',
+    PROFILE: 'vibestream_profile',
+    FAVORITES: 'vibestream_favorites',
+    DOWNLOADS: 'vibestream_downloads',
+    USERS: 'vibestream_users',
+    CURRENT_USER: 'vibestream_current_user',
+    ADVERTISEMENTS: 'vibestream_ads',
+    PODCASTS: 'vibestream_podcasts',
+    LIVE_SESSION: 'vibestream_live_session',
+    MAINTENANCE: 'vibestream_maintenance',
 };
 
 let state = {
-  selectedCategory: 'all',
-  media: [],
-  uploads: [],
-  profile: { name: 'John Doe', initials: 'JD', bio: '' },
-  currentUser: null,
-  users: [],
-  advertisements: [],
-  podcasts: [],
-  recordingPodcast: null,
+    selectedCategory: 'all',
+    media: [],
+    uploads: [],
+    profile: { name: 'John Doe', initials: 'JD', bio: '' },
+    currentUser: null,
+    users: [],
+    advertisements: [],
+    podcasts: [],
+    recordingPodcast: null,
+    liveSession: null,
+    liveStream: null,
+    podcastFilter: 'all',
+    podcastQuery: '',
+    podcastComments: [],
+    podcastGuests: [],
 };
 
-// Sample data - with image URLs
-const SAMPLE_TRENDING = [
-  { id: 1, title: 'High Vibes', artist: 'DJ Yung', type: 'MUSIC', views: 2.5, likes: 1.2, icon: '🎵', image: 'https://picsum.photos/200/200?random=1' },
-  { id: 2, title: 'Street Therapy 2', artist: 'DJ P Kay', type: 'MIXTAPE', views: 1.8, likes: 0.9, icon: '🎤', image: 'https://picsum.photos/200/200?random=2' },
-  { id: 3, title: 'The Dark Knight', artist: 'Action', type: 'MOVIE', views: 5.1, likes: 2.8, icon: '🎬', image: 'https://picsum.photos/200/200?random=3' },
-  { id: 4, title: 'Power Book II', artist: 'Series', type: 'SERIES', views: 1.6, likes: 0.8, icon: '📺', image: 'https://picsum.photos/200/200?random=4' },
-  { id: 5, title: 'Believe', artist: 'Official Video', type: 'MUSIC VIDEO', views: 8.3, likes: 4.2, icon: '🎥', image: 'https://picsum.photos/200/200?random=5' },
-  { id: 6, title: 'Album Cover Pack', artist: 'Graphics', type: 'GRAPHICS', views: 0.8, likes: 0.4, icon: '🎨', image: 'https://picsum.photos/200/200?random=6' },
-  { id: 7, title: 'John Wick 4', artist: 'Action', type: 'MOVIE', views: 6.2, likes: 3.1, icon: '🎬', image: 'https://picsum.photos/200/200?random=7' },
-  { id: 8, title: 'Cyberpunk 2077', artist: 'Gaming', type: 'GRAPHICS', views: 2.1, likes: 1.2, icon: '🎮', image: 'https://picsum.photos/200/200?random=8' },
-];
+function normalizeCount(value) {
+    const num = Number(value);
+    return Number.isFinite(num) && num >= 0 ? Math.round(num) : 0;
+}
 
-const SAMPLE_UPLOADS = [
-  { id: 101, title: 'New Level', artist: 'DJ Blaze', type: 'REMIX', icon: '🎵', image: 'https://picsum.photos/200/200?random=101' },
-  { id: 102, title: 'Ghetto Gospel', artist: 'Gospel', type: 'MUSIC', icon: '🎤', image: 'https://picsum.photos/200/200?random=102' },
-  { id: 103, title: 'No Mercy', artist: 'Rap', type: 'MUSIC', icon: '🎙️', image: 'https://picsum.photos/200/200?random=103' },
-  { id: 104, title: 'The Equalizer 3', artist: 'Movie', type: 'MOVIE', icon: '🎬', image: 'https://picsum.photos/200/200?random=104' },
-  { id: 105, title: 'The Boys S4', artist: 'Series', type: 'SERIES', icon: '📺', image: 'https://picsum.photos/200/200?random=105' },
-  { id: 106, title: 'Cyberpunk Art', artist: 'Design', type: 'GRAPHICS', icon: '🎨', image: 'https://picsum.photos/200/200?random=106' },
-  { id: 107, title: 'Lonely Heart', artist: 'Music', type: 'SINGLE', icon: '🎵', image: 'https://picsum.photos/200/200?random=107' },
-  { id: 108, title: 'Street King', artist: 'Music', type: 'ALBUM', icon: '💿', image: 'https://picsum.photos/200/200?random=108' },
-];
+function normalizeReactionState(item) {
+    if (!item || typeof item !== 'object') return item;
 
+    item.views = normalizeCount(item.views);
+    item.likes = normalizeCount(item.likes);
+    item.reactions = item.reactions || { like: 0, love: 0, fire: 0, celebrate: 0 };
+    Object.keys(item.reactions).forEach((key) => {
+        item.reactions[key] = normalizeCount(item.reactions[key]);
+    });
+
+    item.likes = Object.values(item.reactions).reduce((total, value) => total + normalizeCount(value), 0) || item.likes;
+    return item;
+}
+
+function buildReactionButtons(item, sourceKey, index) {
+    const reactionMap = { like: '👍', love: '💜', fire: '🔥', celebrate: '🎉' };
+    const itemKey = item.id ? `${sourceKey}-${item.id}` : `${sourceKey}-${index}`;
+
+    return `
+    <div class="engagement-row" aria-label="Reaction buttons for ${item.title}">
+      ${Object.entries(reactionMap).map(([type, emoji]) => `
+        <button class="reaction-btn" data-id="${itemKey}" data-reaction="${type}" type="button">
+          <span>${emoji}</span>
+          <span>${normalizeCount(item.reactions?.[type])}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Data arrays are loaded only from localStorage; no built-in demo content is preloaded.
 const CATEGORIES = [
   { name: 'Music', count: 0, icon: '🎵' },
   { name: 'Mixtapes', count: 0, icon: '💿' },
@@ -93,6 +114,24 @@ const els = {
   trendingGrid: document.getElementById('trendingGrid'),
   uploadsGrid: document.getElementById('uploadsGrid'),
   browseGrid: document.getElementById('browseGrid'),
+  marketplaceGrid: document.getElementById('marketplaceGrid'),
+  podcastFeed: document.getElementById('podcastFeed'),
+  liveStatus: document.getElementById('liveStatus'),
+  liveTitle: document.getElementById('liveTitle'),
+  liveDescription: document.getElementById('liveDescription'),
+  liveCategoryChip: document.getElementById('liveCategory'),
+  liveViewers: document.getElementById('liveViewers'),
+  liveLikes: document.getElementById('liveLikes'),
+  liveTitleInput: document.getElementById('liveTitleInput'),
+  liveCategorySelect: document.getElementById('liveCategorySelect'),
+  liveDescInput: document.getElementById('liveDescInput'),
+  startLiveBtn: document.getElementById('startLiveBtn'),
+  stopLiveBtn: document.getElementById('stopLiveBtn'),
+  joinLiveBtn: document.getElementById('joinLiveBtn'),
+  liveChat: document.getElementById('liveChat'),
+  liveChatInput: document.getElementById('liveChatInput'),
+  sendLiveChat: document.getElementById('sendLiveChat'),
+  livePreview: document.getElementById('livePreview'),
   topDownloads: document.getElementById('topDownloads'),
   topCreators: document.getElementById('topCreators'),
   uploadDialog: document.getElementById('uploadDialog'),
@@ -103,6 +142,20 @@ const els = {
   uploadForm: document.getElementById('uploadForm'),
   profileForm: document.getElementById('profileForm'),
   loginForm: document.getElementById('loginForm'),
+  podcastSearchInput: document.getElementById('podcastSearchInput'),
+  podcastCommentTarget: document.getElementById('podcastCommentTarget'),
+  podcastCommentInput: document.getElementById('podcastCommentInput'),
+  podcastCommentSubmit: document.getElementById('podcastCommentSubmit'),
+  podcastCommentList: document.getElementById('podcastCommentList'),
+  podcastGuestInput: document.getElementById('podcastGuestInput'),
+  addGuestBtn: document.getElementById('addGuestBtn'),
+  podcastGuests: document.getElementById('podcastGuests'),
+  podcastForm: document.getElementById('podcastForm'),
+  profileBtn: document.getElementById('profileBtn'),
+  loginBtn: document.getElementById('loginBtn'),
+  playerDialog: document.getElementById('playerDialog'),
+  videoPlayer: document.getElementById('videoPlayer'),
+  audioPlayer: document.getElementById('audioPlayer'),
   registerForm: document.getElementById('registerForm'),
   advertiseForm: document.getElementById('advertiseForm'),
   podcastForm: document.getElementById('podcastForm'),
@@ -120,16 +173,34 @@ const els = {
 // Initialize
 function init() {
   loadData();
+  showMaintenanceNotice();
   setupHeroImage();
   renderCategories();
   renderTrending();
   renderUploads();
   renderBrowse();
+  renderMarketplace();
+  renderPodcastFeed();
+  renderPodcastComments();
+  renderPodcastGuests();
+  renderPodcasts();
+  renderLiveSession();
   renderTopDownloads();
   renderTopCreators();
   setupPlayerControls();
   bindEvents();
   setupMobileMenu();
+  // Apply saved theme
+  const savedTheme = localStorage.getItem('vibestream_theme');
+  if (savedTheme === 'light') document.documentElement.classList.add('light-theme');
+}
+
+function showMaintenanceNotice() {
+  if (localStorage.getItem(DATA_KEYS.MAINTENANCE) !== 'true') return;
+  const notice = document.createElement('div');
+  notice.className = 'maintenance-overlay';
+  notice.innerHTML = '<div class="maintenance-card"><div class="maintenance-icon">🛠️</div><h2>VibeStream is under maintenance</h2><p>We are making improvements. Please check back soon.</p></div>';
+  document.body.appendChild(notice);
 }
 
 // Mobile menu / hamburger
@@ -183,13 +254,27 @@ const OWNER_ACCOUNT = {
 };
 
 function loadData() {
-  state.media = JSON.parse(localStorage.getItem(DATA_KEYS.MEDIA)) || SAMPLE_TRENDING;
-  state.uploads = JSON.parse(localStorage.getItem(DATA_KEYS.UPLOADS)) || SAMPLE_UPLOADS;
-  state.profile = JSON.parse(localStorage.getItem(DATA_KEYS.PROFILE)) || { name: 'LWILL', initials: 'LW', bio: '' };
+  state.media = (JSON.parse(localStorage.getItem(DATA_KEYS.MEDIA)) || []).map(normalizeReactionState);
+  // Do not preload fake/sample uploads by default — only load real uploads from localStorage
+  state.uploads = (JSON.parse(localStorage.getItem(DATA_KEYS.UPLOADS)) || []).map(normalizeReactionState);
+  state.profile = JSON.parse(localStorage.getItem(DATA_KEYS.PROFILE)) || { name: '', initials: '', bio: '' };
   state.currentUser = JSON.parse(localStorage.getItem(DATA_KEYS.CURRENT_USER));
   state.users = JSON.parse(localStorage.getItem(DATA_KEYS.USERS)) || [];
   state.advertisements = JSON.parse(localStorage.getItem(DATA_KEYS.ADVERTISEMENTS)) || [];
   state.podcasts = JSON.parse(localStorage.getItem(DATA_KEYS.PODCASTS)) || [];
+  state.podcastFilter = localStorage.getItem('vibestream_podcast_filter') || 'all';
+  state.podcastQuery = localStorage.getItem('vibestream_podcast_query') || '';
+  state.podcastComments = JSON.parse(localStorage.getItem('vibestream_podcast_comments')) || [];
+  state.podcastGuests = JSON.parse(localStorage.getItem('vibestream_podcast_guests')) || [];
+  state.liveSession = JSON.parse(localStorage.getItem(DATA_KEYS.LIVE_SESSION)) || {
+    active: false,
+    viewers: 0,
+    likes: 0,
+    category: 'Music',
+    title: 'Vibestream Live Studio',
+    description: 'Go live with your show, podcast or marketplace stream.',
+    chat: [],
+  };
 
   // Always ensure owner account exists in users list
   const ownerExists = state.users.find(u => u.email === OWNER_ACCOUNT.email);
@@ -209,8 +294,15 @@ function saveData() {
   localStorage.setItem(DATA_KEYS.USERS, JSON.stringify(state.users));
   localStorage.setItem(DATA_KEYS.ADVERTISEMENTS, JSON.stringify(state.advertisements));
   localStorage.setItem(DATA_KEYS.PODCASTS, JSON.stringify(state.podcasts));
+  localStorage.setItem('vibestream_podcast_filter', state.podcastFilter);
+  localStorage.setItem('vibestream_podcast_query', state.podcastQuery);
+  localStorage.setItem('vibestream_podcast_comments', JSON.stringify(state.podcastComments));
+  localStorage.setItem('vibestream_podcast_guests', JSON.stringify(state.podcastGuests));
+  localStorage.setItem(DATA_KEYS.LIVE_SESSION, JSON.stringify(state.liveSession));
   if (state.currentUser) {
     localStorage.setItem(DATA_KEYS.CURRENT_USER, JSON.stringify(state.currentUser));
+  } else {
+    localStorage.removeItem(DATA_KEYS.CURRENT_USER);
   }
 }
 
@@ -239,6 +331,7 @@ function renderCategories() {
     card.addEventListener('click', () => {
       state.selectedCategory = card.dataset.category;
       renderTrending();
+      document.querySelector('.feed .section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 }
@@ -246,59 +339,78 @@ function renderCategories() {
 // Render trending
 function renderTrending() {
   const items = state.selectedCategory === 'all' ? state.media : state.media.filter(m => m.type.toLowerCase().includes(state.selectedCategory));
-  
+
   if (items.length === 0) {
-    els.trendingGrid.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No content matches your filters.</p>';
+    const label = state.selectedCategory === 'all' ? 'content' : state.selectedCategory;
+    els.trendingGrid.innerHTML = `<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No ${label} uploaded yet. Use Upload Content to add the first one.</p>`;
     return;
   }
 
-  els.trendingGrid.innerHTML = items.map((item, idx) => `
-    <div class="content-card" data-content-id="trending-${idx}">
-      <div class="content-card-img" style="background-image: url('${item.image}'); background-size: cover; background-position: center;"><img src="${item.image}" style="display:none;" onerror="this.parentElement.innerHTML='${item.icon}'"/></div>
-      <div class="content-card-info">
-        <div class="content-card-label">${item.type}</div>
-        <div class="content-card-title">${item.title}</div>
-        <div class="content-card-artist">${item.artist}</div>
-        <div class="content-card-stats">
-          <span>👁️ ${item.views}K</span>
-          <span>❤️ ${item.likes}K</span>
-        </div>
-        <div class="content-card-actions">
-          <button class="btn-action btn-stream" data-id="trending-${idx}" title="Stream this content">▶ Stream</button>
-          <button class="btn-action btn-download" data-id="trending-${idx}" title="Download">⬇ Download</button>
-          <button class="btn-action btn-view" data-id="trending-${idx}" title="View details">👁 View</button>
+  els.trendingGrid.innerHTML = items.map((item, idx) => {
+    const safeItem = normalizeReactionState({ ...item });
+    return `
+      <div class="content-card" data-content-id="trending-${idx}">
+        <div class="content-card-img" style="background-image: url('${safeItem.image || safeItem.coverUrl || ''}'); background-size: cover; background-position: center;"><img src="${safeItem.image || safeItem.coverUrl || ''}" style="display:none;" onerror="this.parentElement.innerHTML='${safeItem.icon}'"/></div>
+        <div class="content-card-info">
+          <div class="content-card-label">${safeItem.type}</div>
+          <div class="content-card-title">${safeItem.title}</div>
+          ${getUploadMetadata(safeItem)}
+          <div class="content-card-stats">
+            <span>👁️ ${safeItem.views}</span>
+            <span>❤ ${normalizeCount(safeItem.likes)}</span>
+          </div>
+          ${buildReactionButtons(safeItem, 'trending', idx)}
+          <div class="content-card-actions">
+            <button class="btn-action btn-stream" data-id="trending-${idx}" title="Stream this content">▶ Stream</button>
+            <button class="btn-action btn-download" data-id="trending-${idx}" title="Download">⬇ Download</button>
+            <button class="btn-action btn-view" data-id="trending-${idx}" title="View details">👁 View</button>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
-  
+    `;
+  }).join('');
+
   bindMediaActions(items, 'trending');
 }
 
 // Render uploads
 function renderUploads() {
-  els.uploadsGrid.innerHTML = state.uploads.map((item, idx) => `
-    <div class="content-card" data-content-id="upload-${idx}">
-      <div class="content-card-img" style="background-image: url('${item.image}'); background-size: cover; background-position: center;"><img src="${item.image}" style="display:none;" onerror="this.parentElement.innerHTML='${item.icon}'"/></div>
-      <div class="content-card-info">
-        <div class="content-card-label">UPLOAD</div>
-        <div class="content-card-title">${item.title}</div>
-        <div class="content-card-artist">${item.artist}</div>
-        <div class="content-card-actions">
-          <button class="btn-action btn-stream" data-id="upload-${idx}" title="Stream this content">▶ Stream</button>
-          <button class="btn-action btn-publish" data-id="upload-${idx}" title="Publish">📤 Publish</button>
-          <button class="btn-action btn-download" data-id="upload-${idx}" title="Download">⬇ Download</button>
-          <button class="btn-action btn-view" data-id="upload-${idx}" title="View details">👁 View</button>
+  if (!state.uploads || state.uploads.length === 0) {
+    els.uploadsGrid.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No uploads yet. Click UPLOAD to add your first item.</p>';
+    return;
+  }
+
+  els.uploadsGrid.innerHTML = state.uploads.map((item, idx) => {
+    const safeItem = normalizeReactionState({ ...item });
+    return `
+      <div class="content-card" data-content-id="upload-${idx}">
+        <div class="content-card-img" style="background-image: url('${safeItem.image || safeItem.coverUrl || ''}'); background-size: cover; background-position: center;"><img src="${safeItem.image || safeItem.coverUrl || ''}" style="display:none;" onerror="this.parentElement.innerHTML='${safeItem.icon || '🎵'}'"/></div>
+        <div class="content-card-info">
+          <div class="content-card-label">UPLOAD</div>
+          <div class="content-card-title">${safeItem.title}</div>
+          ${getUploadMetadata(safeItem)}
+          <div class="content-card-stats">
+            <span>👁️ ${safeItem.views}</span>
+            <span>❤ ${normalizeCount(safeItem.likes)}</span>
+          </div>
+          ${buildReactionButtons(safeItem, 'upload', idx)}
+          <div class="content-card-actions">
+            <button class="btn-action btn-stream" data-id="upload-${idx}" title="Stream this content">▶ Stream</button>
+            <button class="btn-action btn-publish" data-id="upload-${idx}" title="Publish">📤 Publish</button>
+            <button class="btn-action btn-download" data-id="upload-${idx}" title="Download">⬇ Download</button>
+            <button class="btn-action btn-view" data-id="upload-${idx}" title="View details">👁 View</button>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
-  
+    `;
+  }).join('');
+
   bindMediaActions(state.uploads, 'upload');
 }
 
 // Render browse categories
 function renderBrowse() {
+  if (!els.browseGrid) return;
   els.browseGrid.innerHTML = BROWSE_CATEGORIES.map(cat => `
     <div class="browse-item">
       <div class="browse-item-icon">${cat.icon}</div>
@@ -307,18 +419,23 @@ function renderBrowse() {
   `).join('');
 }
 
-// Render advertisements
-function renderAdvertisements() {
-  const adsContainer = document.querySelector('[data-section="marketplace"]') || document.getElementById('marketplaceGrid');
-  if (!adsContainer) return;
-
+// Render marketplace section
+function renderMarketplace() {
+  if (!els.marketplaceGrid) return;
   if (state.advertisements.length === 0) {
-    adsContainer.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No products listed. Be the first to advertise!</p>';
+    els.marketplaceGrid.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No marketplace listings found. Post your first item to sell!</p>';
     return;
   }
 
-  adsContainer.innerHTML = state.advertisements.map(ad => `
+  const visibleAds = state.advertisements.filter(ad => ad.status !== 'rejected');
+  if (visibleAds.length === 0) {
+    els.marketplaceGrid.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No approved marketplace listings are available yet.</p>';
+    return;
+  }
+
+  els.marketplaceGrid.innerHTML = visibleAds.map((ad, idx) => `
     <div class="product-card">
+      <div class="product-card-image" style="background-image: url('${ad.imageUrl || 'https://picsum.photos/420/260?random=' + ad.id}');"></div>
       <div class="product-card-header">
         <div>
           <div class="product-card-title">${ad.productName}</div>
@@ -330,7 +447,10 @@ function renderAdvertisements() {
         <div>📍 ${ad.location}</div>
         <div>🚚 ${ad.deliveryType}</div>
       </div>
-      <p style="font-size: 13px; color: var(--text); margin: 8px 0;">${ad.description}</p>
+      <p class="product-card-description">${ad.description || 'Showcasing the best local product. Add photos for stronger listings.'}</p>
+      <div class="product-card-actions">
+        <button class="contact-btn btn-buy" data-id="market-${ad.id}">🛒 Buy Now</button>
+      </div>
       <div class="product-card-contact">
         <a href="tel:${ad.phone}" class="contact-btn">📞 ${ad.phone}</a>
         ${ad.whatsapp ? `<a href="https://wa.me/${ad.whatsapp}" target="_blank" class="contact-btn whatsapp">💬 WhatsApp</a>` : ''}
@@ -340,6 +460,142 @@ function renderAdvertisements() {
       </div>
     </div>
   `).join('');
+}
+
+// Render podcast feed section
+function getFilteredPodcasts() {
+  const query = (state.podcastQuery || '').trim().toLowerCase();
+  let list = state.podcasts.slice();
+
+  if (state.podcastFilter && state.podcastFilter !== 'all') {
+    list = list.filter(p => (p.tags || '').toLowerCase().includes(state.podcastFilter) || p.type?.toLowerCase().includes(state.podcastFilter) || p.title.toLowerCase().includes(state.podcastFilter));
+  }
+
+  if (query) {
+    list = list.filter(p => p.title.toLowerCase().includes(query) || p.creator.toLowerCase().includes(query) || (p.tags || '').toLowerCase().includes(query));
+  }
+
+  return list;
+}
+
+function renderPodcastFeed() {
+  if (!els.podcastFeed) return;
+  const filteredPodcasts = getFilteredPodcasts();
+
+  if (filteredPodcasts.length === 0) {
+    els.podcastFeed.innerHTML = '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No podcast episodes match your filter yet.</p>';
+    return;
+  }
+
+  els.podcastFeed.innerHTML = filteredPodcasts.map((podcast, idx) => `
+    <div class="content-card" data-content-id="podcast-${idx}">
+      <div class="content-card-img">🎙️</div>
+      <div class="content-card-info">
+        <div class="content-card-label">PODCAST</div>
+        <div class="content-card-title">${podcast.title}</div>
+        <div class="content-card-artist">by ${podcast.creator}</div>
+        <div class="content-card-stats">
+          <span>⏱ ${Math.floor(podcast.duration / 60)}:${(podcast.duration % 60).toString().padStart(2, '0')}</span>
+          <span>${podcast.tags || 'General'}</span>
+        </div>
+        <div class="content-card-actions">
+          <button class="btn-action btn-stream" data-id="podcast-${idx}" title="Stream episode">▶ Stream</button>
+          <button class="btn-action btn-download" data-id="podcast-${idx}" title="Download episode">⬇ Download</button>
+          <button class="btn-action btn-view" data-id="podcast-${idx}" title="Episode details">👁 View</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  bindMediaActions(filteredPodcasts, 'podcast');
+  renderPodcastCommentTargets();
+  renderPodcastComments();
+  renderPodcastGuests();
+}
+
+function renderPodcastCommentTargets() {
+  if (!els.podcastCommentTarget) return;
+  const options = [{ value: 'all', label: 'Comment on all podcasts' }].concat(
+    state.podcasts.map(p => ({ value: `podcast-${p.id}`, label: `Episode: ${p.title}` }))
+  );
+  els.podcastCommentTarget.innerHTML = options.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+}
+
+function renderPodcastComments() {
+  if (!els.podcastCommentList) return;
+  if (!state.podcastComments || state.podcastComments.length === 0) {
+    els.podcastCommentList.innerHTML = '<p style="color: var(--muted); padding: 16px;">No comments yet. Share your thoughts about the latest podcast.</p>';
+    return;
+  }
+
+  els.podcastCommentList.innerHTML = state.podcastComments.map(comment => `
+    <div class="comment-item">
+      <div class="author">${comment.by}</div>
+      <div class="text">${comment.message}</div>
+      <div class="time">${comment.target === 'all' ? 'All episodes' : comment.targetLabel} · ${comment.createdAt}</div>
+    </div>
+  `).join('');
+}
+
+function renderPodcastGuests() {
+  if (!els.podcastGuests) return;
+  if (!state.podcastGuests || state.podcastGuests.length === 0) {
+    els.podcastGuests.innerHTML = '<p style="color: var(--muted); font-size: 13px; padding: 10px;">Invite guests to your next recording session.</p>';
+    return;
+  }
+
+  els.podcastGuests.innerHTML = state.podcastGuests.map((guest, idx) => `
+    <div class="guest-chip">
+      <span>${guest.name}</span>
+      <button type="button" class="btn-action btn-small remove-guest" data-guest-index="${idx}">✕</button>
+    </div>
+  `).join('');
+}
+
+function updatePodcastFilterButtons() {
+  document.querySelectorAll('[data-podcast-filter]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.podcastFilter === state.podcastFilter);
+  });
+}
+
+function renderLiveSession() {
+  if (!els.liveStatus || !els.liveTitle || !els.liveDescription || !els.liveCategoryChip || !els.liveViewers || !els.liveLikes) return;
+  els.liveStatus.textContent = state.liveSession.active ? 'Live Now' : 'Offline';
+  els.liveStatus.classList.toggle('live', state.liveSession.active);
+  els.liveTitle.textContent = state.liveSession.title;
+  els.liveDescription.textContent = state.liveSession.description;
+  els.liveCategoryChip.textContent = `Category: ${state.liveSession.category}`;
+  els.liveViewers.textContent = `Viewers: ${state.liveSession.viewers}`;
+  els.liveLikes.textContent = `Likes: ${state.liveSession.likes}`;
+  document.getElementById('startLiveBtn').style.display = state.liveSession.active ? 'none' : 'inline-flex';
+  document.getElementById('stopLiveBtn').style.display = state.liveSession.active ? 'inline-flex' : 'none';
+  renderLiveChatHistory();
+}
+
+function appendLiveChatMessage(sender, message) {
+  if (!state.liveSession.chat) state.liveSession.chat = [];
+  const entry = {
+    id: Date.now(),
+    sender,
+    message,
+    createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  };
+  state.liveSession.chat.push(entry);
+  saveData();
+  renderLiveChatHistory();
+}
+
+function renderLiveChatHistory() {
+  if (!els.liveChat) return;
+  const chatHistory = state.liveSession.chat || [];
+  els.liveChat.innerHTML = chatHistory.map(entry => `
+    <div class="chat-row chat-${entry.sender}">
+      <span class="chat-sender">${entry.sender === 'system' ? 'System' : entry.sender === 'audience' ? 'Viewer' : 'You'}</span>
+      <span class="chat-message">${entry.message}</span>
+      <span class="chat-time">${entry.createdAt}</span>
+    </div>
+  `).join('');
+  els.liveChat.scrollTop = els.liveChat.scrollHeight;
 }
 
 // Render podcasts
@@ -409,6 +665,98 @@ function renderTopCreators() {
   });
 }
 
+const MUSIC_RELEASE_CATEGORIES = new Set(['music', 'single', 'album', 'ep', 'mixtape']);
+const VIDEO_CATEGORIES = new Set(['video', 'movie', 'series']);
+
+function normalizeUploadCategory(category) {
+  const value = (category || '').toLowerCase();
+  const aliases = {
+    videos: 'video',
+    'music videos': 'video',
+    mixtapes: 'mixtape',
+    albums: 'album',
+    eps: 'ep',
+    movies: 'movie',
+    podcasts: 'podcast',
+  };
+  if (aliases[value]) return aliases[value];
+  return value;
+}
+
+function updateUploadFormFields() {
+  const categorySelect = els.uploadForm?.querySelector('select[name="category"]');
+  if (!categorySelect) return;
+
+  const category = normalizeUploadCategory(categorySelect.value);
+  const isMusicRelease = MUSIC_RELEASE_CATEGORIES.has(category);
+  const isVideo = VIDEO_CATEGORIES.has(category);
+  const musicFields = document.getElementById('musicReleaseFields');
+  const videoFields = document.getElementById('videoDetailsFields');
+  const mediaLabel = document.getElementById('uploadMediaLabel');
+  const mediaHint = document.getElementById('uploadMediaHint');
+  const mediaInput = els.uploadForm.querySelector('input[name="mediaFile"]');
+
+  musicFields.hidden = !isMusicRelease;
+  videoFields.hidden = !isVideo;
+
+  if (isMusicRelease) {
+    mediaLabel.textContent = category === 'music' || category === 'single' ? 'Audio File' : `${category.toUpperCase()} Audio File`;
+    mediaHint.textContent = 'Upload the audio release. Add a tracklist for albums, EPs, and mixtapes.';
+    mediaInput.accept = 'audio/*';
+  } else if (isVideo) {
+    mediaLabel.textContent = category === 'video' ? 'Music Video File' : `${category.charAt(0).toUpperCase() + category.slice(1)} File`;
+    mediaHint.textContent = 'Upload the video file and add the director, release year, and duration.';
+    mediaInput.accept = 'video/*';
+  } else if (category === 'graphics') {
+    mediaLabel.textContent = 'Design File';
+    mediaHint.textContent = 'Upload an image or design file.';
+    mediaInput.accept = 'image/*,.psd,.ai,.pdf';
+  } else if (category === 'podcast') {
+    mediaLabel.textContent = 'Podcast Audio File';
+    mediaHint.textContent = 'Upload the podcast audio file.';
+    mediaInput.accept = 'audio/*';
+  } else {
+    mediaLabel.textContent = 'Upload File';
+    mediaHint.textContent = 'Choose the main file for this upload.';
+    mediaInput.accept = 'image/*,video/*,audio/*';
+  }
+}
+
+function openUploadDialog(category = state.selectedCategory) {
+  const categorySelect = els.uploadForm?.querySelector('select[name="category"]');
+  const normalizedCategory = normalizeUploadCategory(category);
+  if (categorySelect && categorySelect.querySelector(`option[value="${normalizedCategory}"]`)) {
+    categorySelect.value = normalizedCategory;
+  }
+  updateUploadFormFields();
+  els.uploadDialog.showModal();
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error || new Error('Unable to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function getUploadMetadata(item) {
+  const category = normalizeUploadCategory(item.type);
+  if (category === 'movie') {
+    return item.releaseYear ? `<div class="content-card-artist">${item.releaseYear}</div>` : '';
+  }
+  if (category === 'video') {
+    return `<div class="content-card-artist">${item.artist} · ${item.releaseYear || 'Year not set'}</div>
+      <div class="content-card-artist">${item.label || 'None'}${item.producer ? ` · Producer: ${item.producer}` : ''}</div>`;
+  }
+  return `<div class="content-card-artist">${item.artist}</div>`;
+}
+
 // Event listeners
 function bindEvents() {
   // Navigation
@@ -417,9 +765,43 @@ function bindEvents() {
       e.preventDefault();
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
-      if (item.dataset.section) {
-        state.selectedCategory = item.dataset.section;
+      const destination = item.dataset.nav;
+      const section = item.dataset.section;
+
+      if (section && !['podcasts', 'marketplace'].includes(section)) {
+        state.selectedCategory = section;
         renderTrending();
+        document.querySelector('.feed .section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      if (section === 'podcasts' || destination === 'podcasts') {
+        document.getElementById('podcasts')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      if (section === 'marketplace' || destination === 'marketplace-shop') {
+        renderMarketplace();
+        document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      if (destination === 'home') {
+        state.selectedCategory = 'all';
+        renderTrending();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      if (['favorites', 'downloads', 'later', 'recent'].includes(destination)) {
+        const labels = {
+          favorites: 'Favorites',
+          downloads: 'Downloads',
+          later: 'Watch Later',
+          recent: 'Recently Played',
+        };
+        els.trendingGrid.innerHTML = `<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">Your ${labels[destination]} list is empty.</p>`;
+        document.querySelector('.feed .section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
   });
@@ -439,7 +821,7 @@ function bindEvents() {
           alert('Upload content first to enable downloads.');
         }
       } else if (text.includes('Upload')) {
-        els.uploadDialog.showModal();
+        openUploadDialog();
       } else if (text.includes('Share')) {
         if (navigator.share) {
           navigator.share({ title: 'VibeStream', url: 'https://vibestream.co.za' });
@@ -452,9 +834,111 @@ function bindEvents() {
     });
   });
 
+  // Back and Hide buttons on home screen
+  document.getElementById('backBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback: navigate to the root
+      window.location.href = '/';
+    }
+  });
+
+  // Minimize button on the home screen (collapses the hero to a small bar)
+  document.getElementById('minimizeBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    const btn = e.currentTarget;
+    const isMin = hero.dataset.minimized === 'true';
+    if (isMin) {
+      hero.style.height = '';
+      hero.style.overflow = '';
+      hero.dataset.minimized = 'false';
+      btn.textContent = 'Minimize';
+    } else {
+      hero.style.height = '64px';
+      hero.style.overflow = 'hidden';
+      hero.dataset.minimized = 'true';
+      btn.textContent = 'Restore';
+    }
+  });
+
+  // Resize button - toggles between normal and large hero sizes
+  document.getElementById('resizeBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    const current = hero.dataset.size || 'normal';
+    if (current === 'normal') {
+      // Expand
+      hero.style.padding = '64px 24px';
+      hero.style.minHeight = '520px';
+      hero.dataset.size = 'large';
+      e.currentTarget.textContent = '⤡';
+    } else {
+      // Restore
+      hero.style.padding = '';
+      hero.style.minHeight = '';
+      hero.dataset.size = 'normal';
+      e.currentTarget.textContent = '⤢';
+    }
+  });
+
+  // View All links — smooth scroll or placeholder
+  document.querySelectorAll('.view-all, .view-all-sm').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const section = link.closest('.section');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        alert('View all: feature coming soon.');
+      }
+    });
+  });
+
+  // Header Upload / Advertise explicit handlers
+  document.getElementById('uploadTopBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openUploadDialog();
+  });
+
+  document.getElementById('advertiseTopBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    els.advertiseDialog.showModal();
+  });
+
+  // Premium button shows informational toast/modal
+  document.querySelectorAll('.btn-premium').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('✨ Vibestream is 100% FREE — no subscriptions, no hidden fees.');
+    });
+  });
+
+  // Theme toggle
+  document.querySelectorAll('.btn-theme').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const isLight = document.documentElement.classList.toggle('light-theme');
+      localStorage.setItem('vibestream_theme', isLight ? 'light' : 'dark');
+      btn.textContent = isLight ? '🌙' : '☀️';
+    });
+  });
+
+  // Learn more button scrolls to categories
+  document.querySelectorAll('.btn-learn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('.categories')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
   // Upload-now promo button
   document.querySelector('.btn-upload-now')?.addEventListener('click', () => {
-    els.uploadDialog.showModal();
+    openUploadDialog();
   });
 
   // Advertise section button
@@ -467,7 +951,7 @@ function bindEvents() {
     if (el) {
       el.addEventListener('click', (e) => {
         e.preventDefault();
-        els.uploadDialog.showModal();
+        openUploadDialog();
       });
     }
   });
@@ -479,7 +963,7 @@ function bindEvents() {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        els.uploadDialog.showModal();
+        openUploadDialog();
       });
     }
   });
@@ -509,6 +993,16 @@ function bindEvents() {
   // Login button handler
   els.loginBtn.addEventListener('click', (e) => {
     e.preventDefault();
+    if (state.currentUser) {
+      const confirmLogout = confirm(`You are logged in as ${state.currentUser.username}. Do you want to logout?`);
+      if (confirmLogout) {
+        state.currentUser = null;
+        saveData();
+        updateLoginButtonState();
+        alert('✅ You have been logged out.');
+      }
+      return;
+    }
     els.loginDialog.showModal();
   });
 
@@ -531,7 +1025,7 @@ function bindEvents() {
   // Login form submission
   els.loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = els.loginForm.querySelector('input[name="loginEmail"]').value;
+    const email = els.loginForm.querySelector('input[name="loginEmail"]').value.trim().toLowerCase();
     const password = els.loginForm.querySelector('input[name="loginPassword"]').value;
 
     // Find user
@@ -544,15 +1038,15 @@ function bindEvents() {
       els.loginForm.reset();
       alert(`✅ Welcome back, ${user.username}!`);
     } else {
-      alert('❌ Invalid email or password');
+      alert('❌ Invalid email or password. Please check your email and password.');
     }
   });
 
   // Register form submission
   els.registerForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const username = els.registerForm.querySelector('input[name="regUsername"]').value;
-    const email = els.registerForm.querySelector('input[name="regEmail"]').value;
+    const username = els.registerForm.querySelector('input[name="regUsername"]').value.trim();
+    const email = els.registerForm.querySelector('input[name="regEmail"]').value.trim().toLowerCase();
     const password = els.registerForm.querySelector('input[name="regPassword"]').value;
     const confirm = els.registerForm.querySelector('input[name="regConfirm"]').value;
 
@@ -568,7 +1062,7 @@ function bindEvents() {
 
     const newUser = {
       id: Date.now(),
-      username,
+      username: username || email.split('@')[0],
       email,
       password,
       createdAt: new Date().toISOString(),
@@ -580,7 +1074,29 @@ function bindEvents() {
     updateLoginButtonState();
     els.loginDialog.close();
     els.registerForm.reset();
-    alert(`✅ Account created! Welcome, ${username}!`);
+    alert(`✅ Account created! Welcome, ${state.currentUser.username}!`);
+  });
+
+  // Forgot Password handler
+  document.getElementById('forgotPasswordBtn')?.addEventListener('click', () => {
+    const email = prompt('Enter your registered email address to reset your password:');
+    if (!email) return;
+
+    const user = state.users.find(u => u.email === email.trim().toLowerCase());
+    if (!user) {
+      alert('❌ No account found with that email address.');
+      return;
+    }
+
+    const newPassword = prompt('Enter your new password:');
+    if (!newPassword) {
+      alert('❌ Password reset cancelled.');
+      return;
+    }
+
+    user.password = newPassword;
+    saveData();
+    alert('✅ Your password has been reset successfully. You can now login with your new password.');
   });
 
   // Close dialogs
@@ -599,7 +1115,9 @@ function bindEvents() {
   // Advertise form submission
   els.advertiseForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const ad = {
+    const fileInput = els.advertiseForm.querySelector('input[name="productImage"]');
+    const imageFile = fileInput?.files?.[0];
+    const adBase = {
       id: Date.now(),
       productName: els.advertiseForm.querySelector('input[name="productName"]').value,
       price: els.advertiseForm.querySelector('input[name="price"]').value,
@@ -613,14 +1131,217 @@ function bindEvents() {
       description: els.advertiseForm.querySelector('textarea[name="description"]').value,
       createdAt: new Date().toISOString(),
       seller: state.currentUser?.username || 'Anonymous',
+      status: 'pending',
+      imageUrl: 'https://picsum.photos/420/260?random=' + Date.now(),
     };
 
-    state.advertisements.unshift(ad);
-    saveData();
-    els.advertiseDialog.close();
-    els.advertiseForm.reset();
-    alert(`✅ Your ad is now live!\n\n${ad.productName}\n${ad.price}\n\nReach thousands of buyers on Vibestream!`);
+    const saveAd = (ad) => {
+      state.advertisements.unshift(ad);
+      saveData();
+      renderMarketplace();
+      showMarketplaceSection();
+      els.advertiseDialog.close();
+      els.advertiseForm.reset();
+      alert(`✅ Your ad is now live!\n\n${ad.productName}\n${ad.price}\n\nReach thousands of buyers on Vibestream!`);
+    };
+
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        saveAd({ ...adBase, imageUrl: reader.result });
+      };
+      reader.readAsDataURL(imageFile);
+    } else {
+      saveAd(adBase);
+    }
   });
+
+  document.querySelector('.btn-open-marketplace')?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    showMarketplaceSection();
+  });
+
+  document.querySelectorAll('[data-nav="marketplace-shop"]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      showMarketplaceSection();
+    });
+  });
+
+  function showMarketplaceSection() {
+    const section = document.getElementById('marketplace');
+    if (!section) return;
+    renderMarketplace();
+    section.style.display = 'flex';
+    section.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.querySelector('.btn-open-podcast')?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    els.podcastDialog.showModal();
+  });
+
+  if (els.podcastSearchInput) {
+    els.podcastSearchInput.value = state.podcastQuery || '';
+    els.podcastSearchInput.addEventListener('input', (e) => {
+      state.podcastQuery = e.target.value || '';
+      saveData();
+      renderPodcastFeed();
+    });
+  }
+
+  document.querySelectorAll('[data-podcast-filter]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('[data-podcast-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.podcastFilter = btn.dataset.podcastFilter || 'all';
+      saveData();
+      renderPodcastFeed();
+    });
+  });
+
+  setTimeout(() => {
+    updatePodcastFilterButtons();
+  }, 0);
+
+  els.podcastCommentSubmit?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = els.podcastCommentTarget?.value || 'all';
+    const message = els.podcastCommentInput?.value.trim();
+    if (!message) {
+      alert('Please enter a comment before posting.');
+      return;
+    }
+    const targetLabel = target === 'all' ? 'All episodes' : (state.podcasts.find(p => `podcast-${p.id}` === target)?.title || 'Episode');
+    state.podcastComments.unshift({
+      id: Date.now(),
+      target,
+      targetLabel,
+      message,
+      by: state.currentUser?.username || 'You',
+      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    });
+    saveData();
+    els.podcastCommentInput.value = '';
+    renderPodcastComments();
+  });
+
+  els.addGuestBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const guestName = els.podcastGuestInput?.value.trim();
+    if (!guestName) {
+      alert('Enter a guest name to invite.');
+      return;
+    }
+    state.podcastGuests.unshift({ name: guestName, invitedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    saveData();
+    els.podcastGuestInput.value = '';
+    renderPodcastGuests();
+  });
+
+  els.podcastGuests?.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.remove-guest');
+    if (!removeBtn) return;
+    const index = parseInt(removeBtn.dataset.guestIndex, 10);
+    if (Number.isFinite(index)) {
+      state.podcastGuests.splice(index, 1);
+      saveData();
+      renderPodcastGuests();
+    }
+  });
+
+  document.getElementById('openLiveStudio')?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    document.getElementById('liveStudio')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  els.startLiveBtn?.addEventListener('click', async (e) => {
+    e?.preventDefault();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      state.liveStream = stream;
+      if (els.livePreview) {
+        els.livePreview.srcObject = stream;
+        els.livePreview.style.display = 'block';
+      }
+      state.liveSession.active = true;
+      state.liveSession.title = els.liveTitleInput.value.trim() || 'Vibestream Live Studio';
+      state.liveSession.description = els.liveDescInput.value.trim() || 'Go live with your show, podcast or marketplace stream.';
+      state.liveSession.category = els.liveCategorySelect.value || 'Music';
+      state.liveSession.viewers = Math.max(1, state.liveSession.viewers + 1);
+      state.liveSession.likes = Math.max(0, state.liveSession.likes);
+      saveData();
+      renderLiveSession();
+      appendLiveChatMessage('system', `✅ Live stream started: ${state.liveSession.title}`);
+    } catch (err) {
+      alert('❌ Camera and microphone access are required for live streaming. Please allow permission and try again.');
+    }
+  });
+
+  els.stopLiveBtn?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    stopLiveStream();
+    state.liveSession.active = false;
+    saveData();
+    renderLiveSession();
+    appendLiveChatMessage('system', '⏹ Live stream ended. Thank you for watching!');
+  });
+
+  els.joinLiveBtn?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    if (!state.liveSession.active) {
+      alert('No live stream is active right now. Start a live stream first.');
+      return;
+    }
+    state.liveSession.viewers += 1;
+    saveData();
+    renderLiveSession();
+    appendLiveChatMessage('audience', 'A new viewer joined the live stream.');
+  });
+
+  els.sendLiveChat?.addEventListener('click', (e) => {
+    e?.preventDefault();
+    const message = els.liveChatInput.value.trim();
+    if (!message) return;
+    appendLiveChatMessage('user', message);
+    els.liveChatInput.value = '';
+  });
+
+  document.body.addEventListener('click', (e) => {
+    const buyButton = e.target.closest('.btn-buy');
+    if (buyButton) {
+      e.preventDefault();
+      const id = buyButton.dataset.id;
+      if (!id) return;
+      const adId = Number(id.replace('market-', ''));
+      const ad = state.advertisements.find(item => item.id === adId);
+      if (!ad) return;
+      alert(`✅ Purchase confirmed!\n\nProduct: ${ad.productName}\nPrice: ${ad.price}\nSeller: ${ad.seller}\n\nThe seller will contact you via WhatsApp or phone.`);
+      return;
+    }
+  });
+
+  els.liveChatInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const message = els.liveChatInput.value.trim();
+      if (!message) return;
+      appendLiveChatMessage('user', message);
+      els.liveChatInput.value = '';
+    }
+  });
+
+  function stopLiveStream() {
+    if (state.liveStream) {
+      state.liveStream.getTracks().forEach(track => track.stop());
+      state.liveStream = null;
+    }
+    if (els.livePreview) {
+      els.livePreview.srcObject = null;
+      els.livePreview.style.display = 'none';
+    }
+  }
 
   // Podcast recording handlers
   let mediaRecorder;
@@ -667,7 +1388,9 @@ function bindEvents() {
 
   document.getElementById('stopRecording')?.addEventListener('click', (e) => {
     e.preventDefault();
-    mediaRecorder.stop();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
     clearInterval(recordingInterval);
     document.getElementById('podcastStatus').textContent = '✅ Recording Complete';
     document.getElementById('stopRecording').style.display = 'none';
@@ -708,6 +1431,8 @@ function bindEvents() {
 
     state.podcasts.unshift(podcast);
     saveData();
+    renderPodcastFeed();
+    renderPodcasts();
     els.podcastDialog.close();
     els.podcastForm.reset();
     state.recordingPodcast = null;
@@ -721,29 +1446,79 @@ function bindEvents() {
     els.uploadDialog.close();
   });
 
-  els.uploadForm.addEventListener('submit', (e) => {
+  const uploadCategorySelect = els.uploadForm.querySelector('select[name="category"]');
+  const tracklistInput = els.uploadForm.querySelector('textarea[name="tracklist"]');
+  const tracklistCount = document.getElementById('tracklistCount');
+
+  uploadCategorySelect.addEventListener('change', updateUploadFormFields);
+  tracklistInput.addEventListener('input', () => {
+    const tracks = tracklistInput.value.split('\n').map(track => track.trim()).filter(Boolean);
+    if (tracks.length > 50) {
+      tracklistInput.value = tracks.slice(0, 50).join('\n');
+    }
+    tracklistCount.textContent = `${Math.min(tracks.length, 50)} / 50 songs`;
+  });
+
+  els.uploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = els.uploadForm.querySelector('input[name="title"]').value;
     const artistName = els.uploadForm.querySelector('input[name="artistName"]').value;
-    const category = els.uploadForm.querySelector('select[name="category"]').value;
+    const category = normalizeUploadCategory(uploadCategorySelect.value);
     const genre = els.uploadForm.querySelector('input[name="genre"]').value;
     const albumName = els.uploadForm.querySelector('input[name="albumName"]').value;
     const features = els.uploadForm.querySelector('input[name="features"]').value;
-    const tracklist = els.uploadForm.querySelector('textarea[name="tracklist"]').value;
+    const tracklist = tracklistInput.value.split('\n').map(track => track.trim()).filter(Boolean).slice(0, 50);
     const description = els.uploadForm.querySelector('textarea[name="description"]').value;
+    const coverFile = els.uploadForm.querySelector('input[name="cover"]').files?.[0];
+    const mediaFile = els.uploadForm.querySelector('input[name="mediaFile"]').files?.[0];
+    const iconMap = { music: '🎵', single: '🎵', album: '💿', ep: '🎵', mixtape: '💿', video: '🎬', movie: '🎥', series: '📺', podcast: '🎙️', graphics: '🎨', marketplace: '🛍️' };
+    const isMusicRelease = MUSIC_RELEASE_CATEGORIES.has(category);
+    const isVideo = VIDEO_CATEGORIES.has(category);
+
+    if (['album', 'ep', 'mixtape'].includes(category) && tracklist.length === 0) {
+      alert('Add at least one song to the tracklist for an album, EP, or mixtape.');
+      return;
+    }
     
+    const submitButton = els.uploadForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Reading files...';
+
+    let mediaUrl;
+    let coverUrl;
+    try {
+      [mediaUrl, coverUrl] = await Promise.all([
+        readFileAsDataUrl(mediaFile),
+        readFileAsDataUrl(coverFile),
+      ]);
+    } catch (error) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Upload';
+      alert(`Could not read the selected file: ${error.message}`);
+      return;
+    }
+
     const newUpload = {
       id: Date.now(),
       title,
       artist: artistName || state.profile.name,
       type: category.toUpperCase(),
       genre: genre || null,
-      icon: '🎵',
-      albumName: albumName || null,
-      features: features || null,
-      tracklist: tracklist ? tracklist.split('\n').filter(t => t.trim()) : null,
+      icon: iconMap[category] || '📁',
+      albumName: isMusicRelease ? (albumName || null) : null,
+      features: isMusicRelease ? (features || null) : null,
+      tracklist: isMusicRelease && ['album', 'ep', 'mixtape'].includes(category) ? tracklist : null,
+      director: isVideo ? (els.uploadForm.querySelector('input[name="director"]').value || null) : null,
+      label: isVideo ? (els.uploadForm.querySelector('input[name="label"]').value || 'None') : null,
+      producer: isVideo ? (els.uploadForm.querySelector('input[name="producer"]').value || null) : null,
+      releaseYear: isVideo ? (els.uploadForm.querySelector('input[name="releaseYear"]').value || null) : null,
+      duration: isVideo ? (els.uploadForm.querySelector('input[name="duration"]').value || null) : null,
+      coverFileName: coverFile?.name || null,
+      mediaFileName: mediaFile?.name || null,
       description: description || null,
-      coverUrl: null,
+      coverUrl,
+      mediaUrl,
+      mediaMimeType: mediaFile?.type || null,
       published: true,  // Auto-publish when uploaded
       publishedAt: new Date().toISOString(),
     };
@@ -761,6 +1536,10 @@ function bindEvents() {
     renderTrending();
     els.uploadDialog.close();
     els.uploadForm.reset();
+    submitButton.disabled = false;
+    submitButton.textContent = 'Upload';
+    tracklistCount.textContent = '0 / 50 songs';
+    updateUploadFormFields();
     
     // Show success message
     alert(`✓ Content Published!\n\n${title}\nby ${artistName || state.profile.name}\n\nYour content is now live and visible to all users!`);
@@ -789,31 +1568,43 @@ function bindEvents() {
   });
 
   // Search
-  document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const query = e.target.value.toLowerCase();
-      const filtered = state.media.filter(m => m.title.toLowerCase().includes(query) || m.artist.toLowerCase().includes(query));
-      els.trendingGrid.innerHTML = filtered.length ? filtered.map((item, idx) => `
-        <div class="content-card" data-content-id="search-${idx}">
-          <div class="content-card-img">${item.icon}</div>
-          <div class="content-card-info">
-            <div class="content-card-label">${item.type}</div>
-            <div class="content-card-title">${item.title}</div>
-            <div class="content-card-artist">${item.artist}</div>
-            <div class="content-card-stats">
-              <span>👁️ ${item.views}K</span>
-              <span>❤️ ${item.likes}K</span>
-            </div>
-            <div class="content-card-actions">
-              <button class="btn-action btn-stream" data-id="search-${idx}" title="Stream this content">▶ Stream</button>
-              <button class="btn-action btn-download" data-id="search-${idx}" title="Download">⬇ Download</button>
-              <button class="btn-action btn-view" data-id="search-${idx}" title="View details">👁 View</button>
-            </div>
+  function renderSearchResults() {
+    const input = document.getElementById('searchInput');
+    const query = (input?.value || '').toLowerCase();
+    const filtered = state.media.filter(m => (m.title || '').toLowerCase().includes(query) || (m.artist || '').toLowerCase().includes(query));
+    els.trendingGrid.innerHTML = filtered.length ? filtered.map((item, idx) => `
+      <div class="content-card" data-content-id="search-${idx}">
+        <div class="content-card-img">${item.icon || '🎵'}</div>
+        <div class="content-card-info">
+          <div class="content-card-label">${item.type}</div>
+          <div class="content-card-title">${item.title}</div>
+          <div class="content-card-artist">${item.artist}</div>
+          <div class="content-card-stats">
+            <span>👁️ ${normalizeCount(item.views)}</span>
+            <span>❤ ${normalizeCount(item.likes)}</span>
+          </div>
+          ${buildReactionButtons(normalizeReactionState({ ...item }), 'search', idx)}
+          <div class="content-card-actions">
+            <button class="btn-action btn-stream" data-id="search-${idx}" title="Stream this content">▶ Stream</button>
+            <button class="btn-action btn-download" data-id="search-${idx}" title="Download">⬇ Download</button>
+            <button class="btn-action btn-view" data-id="search-${idx}" title="View details">👁 View</button>
           </div>
         </div>
-      `).join('') : '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No results found.</p>';
-      bindMediaActions(filtered, 'search');
+      </div>
+    `).join('') : '<p style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--muted);">No results found.</p>';
+    bindMediaActions(filtered, 'search');
+  }
+
+  document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      renderSearchResults();
     }
+  });
+
+  // Search button click - mirrors Enter behavior
+  document.querySelector('.search-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    renderSearchResults();
   });
 }
 
@@ -887,7 +1678,7 @@ function stopAudioPlayback() {
 // Determine media type for playback
 function getMediaTypeForPlayback(contentType) {
   const type = contentType.toLowerCase();
-  if (type.includes('music') || type.includes('remix') || type.includes('mixtape') || type.includes('album') || type.includes('single') || type.includes('ep')) {
+  if (type.includes('music') || type.includes('remix') || type.includes('mixtape') || type.includes('album') || type.includes('single') || type.includes('ep') || type.includes('podcast')) {
     return 'audio';
   } else if (type.includes('video') || type.includes('movie') || type.includes('series') || type.includes('anime') || type.includes('live')) {
     return 'video';
@@ -904,32 +1695,19 @@ function formatTime(seconds) {
 
 // Update progress bar
 function updateProgressBar() {
-  const progress = (playerState.currentTime / playerState.duration) * 100;
+  const progress = playerState.duration ? (playerState.currentTime / playerState.duration) * 100 : 0;
   document.getElementById('progressFill').style.width = progress + '%';
   document.getElementById('currentTime').textContent = formatTime(playerState.currentTime);
 }
 
 // Update playback simulation
 function simulatePlayback() {
-  if (playerState.isPlaying) {
-    playerState.currentTime += 1;
-    if (playerState.currentTime >= playerState.duration) {
-      playerState.currentTime = 0;
-      playerState.isPlaying = false;
-      stopAudioPlayback();
-      document.getElementById('playBtn').style.display = 'block';
-      document.getElementById('pauseBtn').style.display = 'none';
-      document.getElementById('detailStatus').textContent = 'Finished';
-    } else {
-      // Update frequency of audio for live sound effect
-      if (playerState.oscillator && playerState.audioContext) {
-        const newFreq = 200 + Math.random() * 100 + (playerState.currentTime % 30);
-        playerState.oscillator.frequency.setTargetAtTime(newFreq, playerState.audioContext.currentTime, 0.1);
-      }
-      document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
-    }
-    updateProgressBar();
-  }
+  const mediaElement = playerState.currentType === 'video' ? els.videoPlayer : els.audioElement;
+  if (!mediaElement || mediaElement.paused) return;
+  playerState.currentTime = mediaElement.currentTime;
+  playerState.duration = Number.isFinite(mediaElement.duration) ? mediaElement.duration : playerState.duration;
+  document.getElementById('detailStatus').textContent = `Playing ${formatTime(playerState.currentTime)}`;
+  updateProgressBar();
 }
 
 // Stream media content with enhanced player
@@ -946,15 +1724,37 @@ function streamMedia(item, contentUrl = null) {
   document.getElementById('detailArtist').textContent = item.artist;
   document.getElementById('detailType').textContent = item.type;
   document.getElementById('detailStatus').textContent = 'Ready to stream';
-  document.getElementById('duration').textContent = formatTime(playerState.duration);
+  document.getElementById('duration').textContent = '0:00';
   
   // Set album cover icon based on type
+  const coverImage = document.getElementById('coverImage');
   const coverIcon = item.icon || '🎵';
-  document.getElementById('coverImage').textContent = coverIcon;
+  coverImage.textContent = item.coverUrl ? '' : coverIcon;
+  coverImage.style.backgroundImage = item.coverUrl ? `url("${item.coverUrl}")` : '';
+  coverImage.style.backgroundSize = 'cover';
+  coverImage.style.backgroundPosition = 'center';
   
   // Reset UI
   els.videoPlayer.style.display = 'none';
   els.audioPlayer.style.display = 'none';
+  els.videoPlayer.pause();
+  els.audioElement.pause();
+  els.videoPlayer.removeAttribute('src');
+  els.audioElement.removeAttribute('src');
+  const mediaUrl = contentUrl || item.mediaUrl;
+  if (mediaType === 'video') {
+    els.videoPlayer.src = mediaUrl || '';
+    els.videoPlayer.controls = true;
+    els.videoPlayer.poster = item.coverUrl || '';
+    els.videoPlayer.style.display = mediaUrl ? 'block' : 'none';
+  } else if (mediaType === 'audio') {
+    els.audioElement.src = mediaUrl || '';
+    els.audioElement.controls = true;
+    document.getElementById('playerArtist').textContent = item.artist || 'Unknown artist';
+    document.getElementById('playerGenre').textContent = item.genre || 'Audio';
+    els.audioPlayer.style.display = mediaUrl ? 'block' : 'none';
+  }
+  document.getElementById('detailStatus').textContent = mediaUrl ? 'Ready to play' : 'No playable file attached';
   document.getElementById('playBtn').style.display = 'block';
   document.getElementById('pauseBtn').style.display = 'none';
   playerState.isPlaying = false;
@@ -970,8 +1770,15 @@ function streamMedia(item, contentUrl = null) {
 
 // Play media
 function playMedia() {
+  const mediaElement = playerState.currentType === 'video' ? els.videoPlayer : els.audioElement;
+  if (!mediaElement?.src) {
+    document.getElementById('detailStatus').textContent = 'No playable file attached';
+    return;
+  }
+  mediaElement.play().catch((error) => {
+    document.getElementById('detailStatus').textContent = `Playback failed: ${error.message}`;
+  });
   playerState.isPlaying = true;
-  playAudioWithSound();
   document.getElementById('playBtn').style.display = 'none';
   document.getElementById('pauseBtn').style.display = 'block';
   document.getElementById('detailStatus').textContent = `Streaming ${formatTime(playerState.currentTime)}`;
@@ -979,8 +1786,9 @@ function playMedia() {
 
 // Pause media
 function pauseMedia() {
+  els.videoPlayer.pause();
+  els.audioElement.pause();
   playerState.isPlaying = false;
-  stopAudioPlayback();
   document.getElementById('playBtn').style.display = 'block';
   document.getElementById('pauseBtn').style.display = 'none';
   document.getElementById('detailStatus').textContent = 'Paused';
@@ -988,8 +1796,11 @@ function pauseMedia() {
 
 // Stop media
 function stopMedia() {
+  els.videoPlayer.pause();
+  els.audioElement.pause();
+  els.videoPlayer.currentTime = 0;
+  els.audioElement.currentTime = 0;
   playerState.isPlaying = false;
-  stopAudioPlayback();
   playerState.currentTime = 0;
   if (playerState.playbackInterval) {
     clearInterval(playerState.playbackInterval);
@@ -1015,15 +1826,45 @@ function downloadMedia(item) {
   alert(`✓ Download Started: ${item.title}\nby ${item.artist}\n\nThe file will save to your Downloads folder.`);
 }
 
+function updateReaction(item, type) {
+  if (!item || !item.reactions) return;
+  item.reactions[type] = normalizeCount(item.reactions[type]) + 1;
+  item.likes = Object.values(item.reactions).reduce((total, value) => total + normalizeCount(value), 0);
+  localStorage.setItem(DATA_KEYS.MEDIA, JSON.stringify(state.media));
+  localStorage.setItem(DATA_KEYS.UPLOADS, JSON.stringify(state.uploads));
+}
+
 // Bind media action buttons
 function bindMediaActions(items, type) {
+  document.querySelectorAll('.reaction-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const reaction = btn.dataset.reaction;
+      const itemId = btn.dataset.id;
+      if (!reaction || !itemId) return;
+
+      const itemIndex = itemId.includes('trending-') ? itemId.replace('trending-', '') : itemId.includes('upload-') ? itemId.replace('upload-', '') : null;
+      const item = itemIndex !== null ? items[Number(itemIndex)] : null;
+      if (!item) return;
+
+      updateReaction(item, reaction);
+      renderTrending();
+      renderUploads();
+      renderSearchResults();
+    });
+  });
+
   document.querySelectorAll('.btn-action').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const id = btn.dataset.id;
+      if (!id) return;
       const [prefix, index] = id.split('-');
+      if (!index) return;
       const item = items[parseInt(index)];
-      
+      if (!item) return;
+
       if (btn.classList.contains('btn-stream')) {
         streamMedia(item);
       } else if (btn.classList.contains('btn-publish')) {
@@ -1033,7 +1874,9 @@ function bindMediaActions(items, type) {
       } else if (btn.classList.contains('btn-download')) {
         downloadMedia(item);
       } else if (btn.classList.contains('btn-view')) {
-        alert(`👁 View Details\n\nTitle: ${item.title}\nArtist: ${item.artist}\nType: ${item.type}\nViews: ${item.views || 0}K\nLikes: ${item.likes || 0}K`);
+        const trackDetails = item.tracklist?.length ? `\nTracks: ${item.tracklist.length} (maximum 50)` : '';
+        const videoDetails = item.director ? `\nDirector: ${item.director}\nRelease year: ${item.releaseYear || 'Not set'}\nDuration: ${item.duration || 'Not set'}` : '';
+        alert(`👁 View Details\n\nTitle: ${item.title}\nArtist: ${item.artist}\nType: ${item.type}\nViews: ${item.views || 0}\nLikes: ${item.likes || 0}${trackDetails}${videoDetails}`);
       }
     });
   });
@@ -1058,8 +1901,29 @@ function setupPlayerControls() {
     const bar = e.currentTarget;
     const rect = bar.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
+    const mediaElement = playerState.currentType === 'video' ? els.videoPlayer : els.audioElement;
+    if (mediaElement?.duration) {
+      mediaElement.currentTime = percent * mediaElement.duration;
+    }
     playerState.currentTime = percent * playerState.duration;
     updateProgressBar();
+  });
+
+  [els.videoPlayer, els.audioElement].forEach((mediaElement) => {
+    mediaElement?.addEventListener('loadedmetadata', () => {
+      playerState.duration = mediaElement.duration;
+      document.getElementById('duration').textContent = formatTime(mediaElement.duration);
+      updateProgressBar();
+    });
+    mediaElement?.addEventListener('ended', () => {
+      playerState.isPlaying = false;
+      document.getElementById('playBtn').style.display = 'block';
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('detailStatus').textContent = 'Finished';
+    });
+    mediaElement?.addEventListener('error', () => {
+      document.getElementById('detailStatus').textContent = 'This file could not be played in the browser';
+    });
   });
 }
 

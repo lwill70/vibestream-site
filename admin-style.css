@@ -567,6 +567,48 @@ body {
   box-shadow: 0 4px 12px rgba(255, 91, 125, 0.2);
 }
 
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(31, 113, 255, 0.05);
+}
+
+.admin-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+.wide-field {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
 /* SECTIONS */
 .admin-section {
   display: none;
@@ -1103,6 +1145,7 @@ body {
     height: auto;
     position: relative;
     flex-direction: row;
+    align-items: center;
     padding: 12px;
     border-right: none;
     border-bottom: 1px solid var(--border);
@@ -1111,6 +1154,7 @@ body {
   .admin-nav {
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 4px;
   }
 
   .nav-text {
@@ -1121,11 +1165,80 @@ body {
     padding: 16px;
   }
 
+  .admin-brand {
+    margin: 0 10px 0 0;
+    padding: 8px;
+  }
+
+  .admin-brand h2,
+  .admin-footer {
+    display: none;
+  }
+
+  .nav-link {
+    padding: 9px;
+  }
+
+  .admin-topbar,
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .topbar-actions,
+  .form-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-field {
+    grid-column: auto;
+  }
+
+  .content-item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .content-actions,
+  .ad-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .ad-card {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-main {
+    padding: 10px;
+  }
+
+  .topbar-title h1 {
+    font-size: 22px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    max-width: 100%;
+    white-space: normal;
   }
 }
