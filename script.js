@@ -695,9 +695,24 @@ function updateUploadFormFields() {
   const mediaLabel = document.getElementById('uploadMediaLabel');
   const mediaHint = document.getElementById('uploadMediaHint');
   const mediaInput = els.uploadForm.querySelector('input[name="mediaFile"]');
+  const artistField = document.getElementById('uploadArtistField');
+  const genreField = document.getElementById('uploadGenreField');
+  const directorField = document.getElementById('uploadDirectorField');
+  const labelField = document.getElementById('uploadLabelField');
+  const producerField = document.getElementById('uploadProducerField');
+  const durationField = document.getElementById('uploadDurationField');
+  const artistInput = els.uploadForm.querySelector('input[name="artistName"]');
 
   musicFields.hidden = !isMusicRelease;
   videoFields.hidden = !isVideo;
+  const isMovie = category === 'movie';
+  artistField.hidden = isMovie;
+  genreField.hidden = isMovie;
+  directorField.hidden = !isVideo || isMovie;
+  labelField.hidden = !isVideo || isMovie;
+  producerField.hidden = !isVideo || isMovie;
+  durationField.hidden = !isVideo || isMovie;
+  artistInput.required = !isMovie;
 
   if (isMusicRelease) {
     mediaLabel.textContent = category === 'music' || category === 'single' ? 'Audio File' : `${category.toUpperCase()} Audio File`;
@@ -748,10 +763,12 @@ function readFileAsDataUrl(file) {
 function getUploadMetadata(item) {
   const category = normalizeUploadCategory(item.type);
   if (category === 'movie') {
-    return item.releaseYear ? `<div class="content-card-artist">${item.releaseYear}</div>` : '';
+    return item.releaseYear ? `<div class="content-card-artist">${item.releaseYear}</div>` : '<div class="content-card-artist">Year not set</div>';
   }
   if (category === 'video') {
-    return `<div class="content-card-artist">${item.artist} · ${item.releaseYear || 'Year not set'}</div>
+    return `<div class="content-card-artist">${item.artist}</div>
+      <div class="content-card-artist">${item.genre || 'Genre not set'}</div>
+      <div class="content-card-artist">${item.director || 'Video creator not set'} · ${item.releaseYear || 'Year not set'}</div>
       <div class="content-card-artist">${item.label || 'None'}${item.producer ? ` · Producer: ${item.producer}` : ''}</div>`;
   }
   return `<div class="content-card-artist">${item.artist}</div>`;

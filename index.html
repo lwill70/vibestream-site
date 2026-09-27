@@ -417,7 +417,7 @@
           Title
           <input type="text" name="title" placeholder="Enter title" required />
         </label>
-                <label>
+                <label id="uploadArtistField">
           Artist Name
           <input type="text" name="artistName" placeholder="Your artist/creator name" required />
         </label>
@@ -459,15 +459,15 @@
                     </label>
                 </div>
                 <div id="videoDetailsFields" class="upload-form-section" hidden>
-                    <label>
+                    <label id="uploadDirectorField">
                         Director / Video Creator
                         <input type="text" name="director" placeholder="Who directed or created this video?" />
                     </label>
-                    <label>
+                    <label id="uploadLabelField">
                         Record Label
                         <input type="text" name="label" placeholder="Record label or leave blank" />
                     </label>
-                    <label>
+                    <label id="uploadProducerField">
                         Producer
                         <input type="text" name="producer" placeholder="Producer (optional)" />
                     </label>
@@ -475,7 +475,7 @@
                         Release Year
                         <input type="number" name="releaseYear" min="1900" max="2100" placeholder="2026" />
                     </label>
-                    <label>
+                    <label id="uploadDurationField">
                         Duration
                         <input type="text" name="duration" placeholder="e.g., 4:32" />
                     </label>
