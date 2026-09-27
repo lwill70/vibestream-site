@@ -756,6 +756,9 @@ function updateUploadFormFields() {
   const durationField = document.getElementById('uploadDurationField');
   const artistInput = els.uploadForm.querySelector('input[name="artistName"]');
 
+  document.querySelectorAll('[data-upload-category]').forEach((card) => {
+    card.classList.toggle('active', card.dataset.uploadCategory === category || (category === 'album' || category === 'ep' || category === 'mixtape' || category === 'single') && card.dataset.uploadCategory === 'music');
+  });
   musicFields.hidden = !isMusicRelease;
   videoFields.hidden = !isVideo;
   const isMovie = category === 'movie';
@@ -1523,6 +1526,34 @@ function bindEvents() {
   const tracklistCount = document.getElementById('tracklistCount');
 
   uploadCategorySelect.addEventListener('change', updateUploadFormFields);
+  document.querySelectorAll('[data-upload-category]').forEach((card) => {
+    card.addEventListener('click', () => {
+      uploadCategorySelect.value = card.dataset.uploadCategory;
+      updateUploadFormFields();
+    });
+  });
+  const releaseTypeSelect = els.uploadForm.querySelector('select[name="releaseType"]');
+  releaseTypeSelect?.addEventListener('change', () => {
+    uploadCategorySelect.value = releaseTypeSelect.value;
+    updateUploadFormFields();
+  });
+  const mediaDropzone = document.getElementById('uploadMediaField');
+  const mediaInput = els.uploadForm.querySelector('input[name="mediaFile"]');
+  const updateSelectedFileName = () => {
+    const selectedFile = mediaInput.files?.[0];
+    if (selectedFile) document.getElementById('uploadMediaHint').textContent = `${selectedFile.name} (${Math.round(selectedFile.size / 1024 / 1024 * 10) / 10} MB)`;
+  };
+  mediaInput.addEventListener('change', updateSelectedFileName);
+  ['dragenter', 'dragover'].forEach((eventName) => mediaDropzone.addEventListener(eventName, (event) => { event.preventDefault(); mediaDropzone.classList.add('dragging'); }));
+  ['dragleave', 'drop'].forEach((eventName) => mediaDropzone.addEventListener(eventName, (event) => { event.preventDefault(); mediaDropzone.classList.remove('dragging'); }));
+  mediaDropzone.addEventListener('drop', (event) => {
+    const files = event.dataTransfer.files;
+    if (files.length) {
+      mediaInput.files = files;
+      updateSelectedFileName();
+    }
+  });
+  document.getElementById('cancelUpload')?.addEventListener('click', () => els.uploadDialog.close());
   tracklistInput.addEventListener('input', () => {
     const tracks = tracklistInput.value.split('\n').map(track => track.trim()).filter(Boolean);
     if (tracks.length > 50) {
@@ -1536,7 +1567,7 @@ function bindEvents() {
     const title = els.uploadForm.querySelector('input[name="title"]').value;
     const artistName = els.uploadForm.querySelector('input[name="artistName"]').value;
     const category = normalizeUploadCategory(uploadCategorySelect.value);
-    const genre = els.uploadForm.querySelector('input[name="genre"]').value;
+    const genre = els.uploadForm.querySelector('select[name="genre"]').value;
     const albumName = els.uploadForm.querySelector('input[name="albumName"]').value;
     const features = els.uploadForm.querySelector('input[name="features"]').value;
     const tracklist = tracklistInput.value.split('\n').map(track => track.trim()).filter(Boolean).slice(0, 50);

@@ -408,107 +408,54 @@
     </div>
 
     <!-- DIALOGS -->
-    <dialog id="uploadDialog" class="dialog">
-        <div class="dialog-box">
+    <dialog id="uploadDialog" class="dialog upload-dialog">
+        <div class="dialog-box upload-shell">
             <button class="dialog-close" id="closeUpload">✕</button>
-            <h3>Upload New Content</h3>
-            <form id="uploadForm" class="upload-form">
-                <label>
-          Title
-          <input type="text" name="title" placeholder="Enter title" required />
-        </label>
-                <label id="uploadArtistField">
-          Artist Name
-          <input type="text" name="artistName" placeholder="Your artist/creator name" required />
-        </label>
-                <label>
-          Category
-          <select name="category" required>
-            <option value="">Select category</option>
-            <option value="music">Music</option>
-            <option value="album">Album</option>
-            <option value="single">Single</option>
-            <option value="ep">EP</option>
-            <option value="mixtape">Mixtape</option>
-            <option value="video">Music Video</option>
-            <option value="movie">Movie</option>
-            <option value="series">Series</option>
-            <option value="podcast">Podcast</option>
-            <option value="graphics">Graphics</option>
-            <option value="marketplace">Marketplace</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-                <label id="uploadGenreField">
-                    Style
-                    <select name="genre">
-                        <option value="">Select style</option>
-                        <option value="Comedy">Comedy</option>
-                        <option value="Romantic">Romantic</option>
-                        <option value="Action">Action</option>
-                        <option value="Drama">Drama</option>
-                        <option value="Thriller">Thriller</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Documentary">Documentary</option>
-                        <option value="Animation">Animation</option>
-                        <option value="Lifestyle">Lifestyle</option>
-                        <option value="Hip-Hop">Hip-Hop</option>
-                        <option value="Amapiano">Amapiano</option>
-                        <option value="Gospel">Gospel</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </label>
-                <div id="musicReleaseFields" class="upload-form-section" hidden>
-                    <label>
-                        Album / Project Name
-                        <input type="text" name="albumName" placeholder="Album or project name" />
-                    </label>
-                    <label>
-                        Features / Collaborators
-                        <input type="text" name="features" placeholder="Artist names, comma-separated" />
-                    </label>
-                    <label id="tracklistField">
-                        Tracklist <span class="field-hint">Maximum 50 songs</span>
-                        <textarea name="tracklist" placeholder="Enter one song title per line" rows="5" maxlength="3000"></textarea>
-                        <small id="tracklistCount" class="field-hint">0 / 50 songs</small>
-                    </label>
+            <header class="upload-heading">
+                <div class="upload-heading-icon">☁</div>
+                <div>
+                    <h3>Upload New Content</h3>
+                    <p>Share your music, videos, albums, EPs, movies, series and more with your audience.</p>
                 </div>
-                <div id="videoDetailsFields" class="upload-form-section" hidden>
-                    <label id="uploadDirectorField">
-                        Director / Video Creator
-                        <input type="text" name="director" placeholder="Who directed or created this video?" />
-                    </label>
-                    <label id="uploadLabelField">
-                        Record Label
-                        <input type="text" name="label" placeholder="Record label or leave blank" />
-                    </label>
-                    <label id="uploadProducerField">
-                        Producer
-                        <input type="text" name="producer" placeholder="Producer (optional)" />
-                    </label>
-                    <label>
-                        Release Year
-                        <input type="number" name="releaseYear" min="1900" max="2100" placeholder="2026" />
-                    </label>
-                    <label id="uploadDurationField">
-                        Duration
-                        <input type="text" name="duration" placeholder="e.g., 4:32" />
-                    </label>
-                </div>
-                <label id="uploadCoverField">
-                    Cover / Thumbnail
-                    <input type="file" name="cover" accept="image/*" />
-                </label>
-                <label>
-                    Description
-                    <textarea name="description" placeholder="Tell people about this upload" rows="3"></textarea>
-                </label>
-                <label id="uploadMediaField">
-                    <span id="uploadMediaLabel">Upload File</span>
-                    <input type="file" name="mediaFile" accept="image/*,video/*,audio/*" />
-                    <small id="uploadMediaHint" class="field-hint">Choose the main file for this upload.</small>
-                </label>
-                <button type="submit" class="btn-submit">Upload</button>
+                <div class="upload-trust">🛡 Quality Content <span>•</span> Real Fans <span>•</span> More Reach</div>
+            </header>
+            <form id="uploadForm" class="upload-workspace">
+                <section class="upload-primary">
+                    <label class="upload-field" id="uploadTitleField"><span>▣ <b>Title</b> *</span><input type="text" name="title" placeholder="Enter the title of your content" required /></label>
+                    <label class="upload-field" id="uploadArtistField"><span>♙ <b>Artist / Creator Name</b> *</span><input type="text" name="artistName" placeholder="Enter your artist or creator name" required /></label>
+                    <label class="upload-field"><span>▦ <b>Category</b> *</span><select name="category" required>
+                        <option value="">Select category</option><option value="music">Music</option><option value="album">Album</option><option value="single">Single</option><option value="ep">EP</option><option value="mixtape">Mixtape</option><option value="video">Music Video</option><option value="movie">Movie</option><option value="series">Series</option><option value="podcast">Podcast</option><option value="graphics">Graphics</option><option value="marketplace">Marketplace</option><option value="other">Other</option>
+                    </select></label>
+                    <div class="upload-category-grid" aria-label="Choose upload category">
+                        <button type="button" class="upload-category-card" data-upload-category="music">♫<strong>Music</strong><small>Singles, Albums, EPs, Mixtapes</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="movie">▣<strong>Movies</strong><small>Full movies</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="series">▣<strong>Series</strong><small>TV shows & seasons</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="podcast">♩<strong>Podcast</strong><small>Episodes & shows</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="graphics">▧<strong>Graphics</strong><small>Images, Covers, Artwork</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="marketplace">▤<strong>Marketplace</strong><small>Products & Services</small></button>
+                        <button type="button" class="upload-category-card" data-upload-category="other">•••<strong>Other</strong><small>Custom content</small></button>
+                    </div>
+                    <label id="uploadGenreField" class="upload-field"><span><b>Style</b></span><select name="genre"><option value="">Select style</option><option>Comedy</option><option>Romantic</option><option>Action</option><option>Drama</option><option>Thriller</option><option>Horror</option><option>Documentary</option><option>Animation</option><option>Lifestyle</option><option>Hip-Hop</option><option>Amapiano</option><option>Gospel</option><option>Other</option></select></label>
+                    <label id="uploadMediaField" class="upload-dropzone"><span class="upload-cloud">☁</span><b id="uploadMediaLabel">Upload File *</b><span id="uploadMediaHint">Drag & drop your file here or choose a file</span><input type="file" name="mediaFile" accept="image/*,video/*,audio/*" required /><small>Supported formats depend on your category.</small></label>
+                    <label id="uploadCoverField" class="upload-cover-field"><span>Album Cover / Thumbnail</span><input type="file" name="cover" accept="image/*" /></label>
+                </section>
+                <section class="upload-secondary">
+                    <div id="videoDetailsFields" class="upload-panel" hidden>
+                        <h4>▣ Movie / Series Details</h4>
+                        <p>Add the details for your movie or series.</p>
+                        <div class="upload-inline-grid"><label id="uploadDirectorField">Video Creator / Director<input type="text" name="director" placeholder="Name" /></label><label>Release Year<input type="number" name="releaseYear" min="1900" max="2100" placeholder="e.g. 2026" /></label>
+                            <label id="uploadDurationField">Duration<input type="text" name="duration" placeholder="e.g. 1h 45m" /></label></div>
+                    </div>
+                    <div id="musicReleaseFields" class="upload-panel" hidden>
+                        <h4>♫ Album / EP Details</h4>
+                        <p>Add your release information and track list.</p>
+                        <div class="upload-release-types"><label>Release Type<select name="releaseType"><option value="album">Album</option><option value="ep">EP</option><option value="single">Single</option><option value="mixtape">Mixtape</option></select></label><label>Album / Project Name<input type="text" name="albumName" placeholder="Project name" /></label><label>Features / Collaborators<input type="text" name="features" placeholder="Artist names" /></label></div>
+                        <label
+                            id="tracklistField">Track List <span class="field-hint">Maximum 50 songs</span><textarea name="tracklist" placeholder="Enter one song title per line" rows="6" maxlength="3000"></textarea><small id="tracklistCount" class="field-hint">0 / 50 songs</small></label>
+                    </div>
+                    <label class="upload-description">Description<textarea name="description" placeholder="Enter a short description about your content..." rows="4"></textarea></label>
+                    <div class="upload-actions"><button type="button" id="cancelUpload" class="btn-cancel">Cancel</button><button type="submit" class="btn-submit">☁ Upload Content</button></div>
+                </section>
             </form>
         </div>
     </dialog>
