@@ -14,6 +14,50 @@ const DATA_KEYS = {
     MAINTENANCE: 'vibestream_maintenance',
 };
 
+const MEDIA_DB_NAME = 'vibestream_media_files';
+const MEDIA_DB_STORE = 'files';
+let mediaObjectUrls = new Map();
+
+function openMediaDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(MEDIA_DB_NAME, 1);
+        request.onupgradeneeded = () => request.result.createObjectStore(MEDIA_DB_STORE, { keyPath: 'key' });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('Media storage is unavailable'));
+    });
+}
+
+async function storeMediaFile(file) {
+    if (!file) return { key: null, url: null };
+    const key = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const database = await openMediaDatabase();
+    await new Promise((resolve, reject) => {
+        const request = database.transaction(MEDIA_DB_STORE, 'readwrite').objectStore(MEDIA_DB_STORE).put({ key, blob: file });
+        request.onsuccess = resolve;
+        request.onerror = () => reject(request.error || new Error('Unable to save media file'));
+    });
+    database.close();
+    const url = URL.createObjectURL(file);
+    mediaObjectUrls.set(key, url);
+    return { key, url };
+}
+
+async function getStoredMediaUrl(key) {
+    if (!key) return null;
+    if (mediaObjectUrls.has(key)) return mediaObjectUrls.get(key);
+    const database = await openMediaDatabase();
+    const record = await new Promise((resolve, reject) => {
+        const request = database.transaction(MEDIA_DB_STORE, 'readonly').objectStore(MEDIA_DB_STORE).get(key);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+    database.close();
+    if (!record || !record.blob) return null;
+    const url = URL.createObjectURL(record.blob);
+    mediaObjectUrls.set(key, url);
+    return url;
+}
+
 let state = {
     selectedCategory: 'all',
     media: [],
@@ -171,8 +215,9 @@ const els = {
 };
 
 // Initialize
-function init() {
+async function init() {
   loadData();
+  await hydrateStoredMediaUrls();
   showMaintenanceNotice();
   setupHeroImage();
   renderCategories();
@@ -284,6 +329,14 @@ function loadData() {
   }
 
   updateLoginButtonState();
+}
+
+async function hydrateStoredMediaUrls() {
+  const items = [...state.media, ...state.uploads];
+  await Promise.all(items.map(async (item) => {
+    if (item.mediaKey) item.mediaUrl = await getStoredMediaUrl(item.mediaKey);
+    if (item.coverKey) item.coverUrl = await getStoredMediaUrl(item.coverKey);
+  }));
 }
 
 // Save data to localStorage
@@ -706,13 +759,14 @@ function updateUploadFormFields() {
   musicFields.hidden = !isMusicRelease;
   videoFields.hidden = !isVideo;
   const isMovie = category === 'movie';
-  artistField.hidden = isMovie;
-  genreField.hidden = isMovie;
+  const hidesArtist = ['movie', 'marketplace', 'graphics', 'series'].includes(category);
+  artistField.hidden = hidesArtist;
+  genreField.hidden = false;
   directorField.hidden = !isVideo || isMovie;
   labelField.hidden = !isVideo || isMovie;
   producerField.hidden = !isVideo || isMovie;
   durationField.hidden = !isVideo || isMovie;
-  artistInput.required = !isMovie;
+  artistInput.required = !hidesArtist;
 
   if (isMusicRelease) {
     mediaLabel.textContent = category === 'music' || category === 'single' ? 'Audio File' : `${category.toUpperCase()} Audio File`;
@@ -762,12 +816,13 @@ function readFileAsDataUrl(file) {
 
 function getUploadMetadata(item) {
   const category = normalizeUploadCategory(item.type);
-  if (category === 'movie') {
-    return item.releaseYear ? `<div class="content-card-artist">${item.releaseYear}</div>` : '<div class="content-card-artist">Year not set</div>';
+  const style = item.genre || 'Style not set';
+  if (['movie', 'marketplace', 'graphics', 'series'].includes(category)) {
+    return `<div class="content-card-artist">${style}</div>${category === 'movie' ? `<div class="content-card-artist">${item.releaseYear || 'Year not set'}</div>` : ''}`;
   }
   if (category === 'video') {
     return `<div class="content-card-artist">${item.artist}</div>
-      <div class="content-card-artist">${item.genre || 'Genre not set'}</div>
+      <div class="content-card-artist">${style}</div>
       <div class="content-card-artist">${item.director || 'Video creator not set'} · ${item.releaseYear || 'Year not set'}</div>
       <div class="content-card-artist">${item.label || 'None'}${item.producer ? ` · Producer: ${item.producer}` : ''}</div>`;
   }
@@ -1501,12 +1556,12 @@ function bindEvents() {
     submitButton.disabled = true;
     submitButton.textContent = 'Reading files...';
 
-    let mediaUrl;
-    let coverUrl;
+    let mediaFileRecord;
+    let coverFileRecord;
     try {
-      [mediaUrl, coverUrl] = await Promise.all([
-        readFileAsDataUrl(mediaFile),
-        readFileAsDataUrl(coverFile),
+      [mediaFileRecord, coverFileRecord] = await Promise.all([
+        storeMediaFile(mediaFile),
+        storeMediaFile(coverFile),
       ]);
     } catch (error) {
       submitButton.disabled = false;
@@ -1533,8 +1588,10 @@ function bindEvents() {
       coverFileName: coverFile?.name || null,
       mediaFileName: mediaFile?.name || null,
       description: description || null,
-      coverUrl,
-      mediaUrl,
+      coverKey: coverFileRecord.key,
+      mediaKey: mediaFileRecord.key,
+      coverUrl: coverFileRecord.url,
+      mediaUrl: mediaFileRecord.url,
       mediaMimeType: mediaFile?.type || null,
       published: true,  // Auto-publish when uploaded
       publishedAt: new Date().toISOString(),
@@ -1728,8 +1785,9 @@ function simulatePlayback() {
 }
 
 // Stream media content with enhanced player
-function streamMedia(item, contentUrl = null) {
+async function streamMedia(item, contentUrl = null) {
   const mediaType = getMediaTypeForPlayback(item.type);
+  const mediaUrl = contentUrl || item.mediaUrl || await getStoredMediaUrl(item.mediaKey);
   playerState.currentMedia = item;
   playerState.currentType = mediaType;
   playerState.currentTime = 0;
@@ -1758,7 +1816,6 @@ function streamMedia(item, contentUrl = null) {
   els.audioElement.pause();
   els.videoPlayer.removeAttribute('src');
   els.audioElement.removeAttribute('src');
-  const mediaUrl = contentUrl || item.mediaUrl;
   if (mediaType === 'video') {
     els.videoPlayer.src = mediaUrl || '';
     els.videoPlayer.controls = true;
